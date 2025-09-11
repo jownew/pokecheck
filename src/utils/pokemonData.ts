@@ -226,7 +226,7 @@ export const fetchPokemonData = async (
 
     onProgress?.(80);
 
-    // Sort by Pokédex number for consistent ordering
+    // Sort by PokéCheck number for consistent ordering
     const sortedData = data.sort((a, b) => a.dexNr - b.dexNr);
 
     onProgress?.(90);
@@ -263,7 +263,7 @@ export const getPokemonData = async (
 };
 
 /**
- * Search Pokémon by name, type, or Pokédex number
+ * Search Pokémon by name, type, or PokéCheck number
  */
 export const searchPokemon = (
   pokemonList: Pokemon[],
@@ -277,7 +277,7 @@ export const searchPokemon = (
     // Search by name
     const nameMatch = pokemon.names.English.toLowerCase().includes(term);
 
-    // Search by Pokédex number
+    // Search by PokéCheck number
     const dexMatch = pokemon.dexNr.toString().includes(term);
 
     // Search by type

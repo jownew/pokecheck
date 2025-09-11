@@ -1,0 +1,198 @@
+const fs = require('fs');
+const path = require('path');
+
+// Simple script to create a basic PNG version of the OG image
+// For production, you might want to use a more sophisticated image generation library
+
+const createOGImageHTML = () => {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 1200px;
+            height: 630px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%);
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: 
+                radial-gradient(circle at 50px 50px, rgba(255,255,255,0.3) 40px, transparent 40px),
+                radial-gradient(circle at 50px 50px, rgba(255,255,255,0.1) 8px, transparent 8px);
+            background-size: 100px 100px;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            padding: 100px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .icon {
+            width: 160px;
+            height: 160px;
+            background: white;
+            border-radius: 50%;
+            margin-right: 60px;
+            position: relative;
+            border: 4px solid #e5e7eb;
+            flex-shrink: 0;
+        }
+        
+        .icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #e5e7eb;
+            transform: translateY(-50%);
+        }
+        
+        .icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            background: #ef4444;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            border: 4px solid white;
+        }
+        
+        .content h1 {
+            font-size: 72px;
+            font-weight: bold;
+            color: white;
+            margin: 0 0 20px 0;
+        }
+        
+        .content h2 {
+            font-size: 36px;
+            color: #e0e7ff;
+            margin: 0 0 30px 0;
+            font-weight: normal;
+        }
+        
+        .content p {
+            font-size: 24px;
+            color: #cbd5e1;
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+        }
+        
+        .features {
+            margin-top: 40px;
+        }
+        
+        .feature {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 15px 0;
+        }
+        
+        .feature.search { color: #fbbf24; }
+        .feature.pwa { color: #34d399; }
+        .feature.info { color: #f472b6; }
+        
+        .badges {
+            position: absolute;
+            bottom: 150px;
+            right: 100px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 17px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 5px 0;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        .badge.nextjs { background: #000; color: white; }
+        .badge.react { background: #61dafb; color: black; }
+        .badge.typescript { background: #3178c6; color: white; }
+        
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e2e8f0;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="pattern"></div>
+    <div class="container">
+        <div class="icon"></div>
+        <div class="content">
+            <h1>PokéCheck</h1>
+            <h2>Explore Pokémon</h2>
+            <p>A comprehensive mobile-responsive PokéCheck app</p>
+            <p>to search and explore Pokémon with detailed</p>
+            <p>information, stats, moves, and evolution chains.</p>
+            
+            <div class="features">
+                <div class="feature search">✨ Smart Search & Filtering</div>
+                <div class="feature pwa">📱 Progressive Web App</div>
+                <div class="feature info">🎮 Detailed Pokémon Info</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="badges">
+        <div class="badge nextjs">Next.js 15</div><br>
+        <div class="badge react">React 19</div><br>
+        <div class="badge typescript">TypeScript</div>
+    </div>
+    
+    <div class="footer">
+        Built with ❤️ using Next.js and TypeScript
+    </div>
+</body>
+</html>
+  `;
+};
+
+// Create the HTML file for screenshot generation
+const htmlContent = createOGImageHTML();
+fs.writeFileSync(
+  path.join(__dirname, '../public/og-preview.html'),
+  htmlContent
+);
+
+console.log('OG image HTML template created at public/og-preview.html');
+console.log('To generate the PNG:');
+console.log('1. Open public/og-preview.html in a browser');
+console.log('2. Take a screenshot at 1200x630 resolution');
+console.log('3. Save as public/og-image.png');
+console.log('');
+console.log('Or use a tool like Puppeteer to automate this process.');

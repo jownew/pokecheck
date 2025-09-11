@@ -1,5 +1,5 @@
 // Service Worker for offline support
-const CACHE_NAME = 'pokedex-v1';
+const CACHE_NAME = 'pokecheck-v1';
 const STATIC_CACHE_URLS = [
   '/',
   '/manifest.json',
@@ -9,7 +9,8 @@ const STATIC_CACHE_URLS = [
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
+    caches
+      .open(CACHE_NAME)
       .then((cache) => {
         return cache.addAll(STATIC_CACHE_URLS);
       })
@@ -22,7 +23,8 @@ self.addEventListener('install', (event) => {
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys()
+    caches
+      .keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
@@ -53,10 +55,9 @@ self.addEventListener('fetch', (event) => {
           // If online, cache the response and return it
           if (response.ok) {
             const responseClone = response.clone();
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseClone);
-              });
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
           }
           return response;
         })
@@ -70,26 +71,23 @@ self.addEventListener('fetch', (event) => {
 
   // Handle other requests with cache-first strategy
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version if available
-        if (response) {
-          return response;
-        }
-        
-        // Otherwise, fetch from network
-        return fetch(event.request)
-          .then((response) => {
-            // Cache successful responses
-            if (response.ok) {
-              const responseClone = response.clone();
-              caches.open(CACHE_NAME)
-                .then((cache) => {
-                  cache.put(event.request, responseClone);
-                });
-            }
-            return response;
+    caches.match(event.request).then((response) => {
+      // Return cached version if available
+      if (response) {
+        return response;
+      }
+
+      // Otherwise, fetch from network
+      return fetch(event.request).then((response) => {
+        // Cache successful responses
+        if (response.ok) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
           });
-      })
+        }
+        return response;
+      });
+    })
   );
 });

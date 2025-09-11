@@ -36,7 +36,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         </div>
 
         {/* Title */}
-        <h1 className='text-3xl font-bold text-gray-800 mb-2'>Pokédex</h1>
+        <h1 className='text-3xl font-bold text-gray-800 mb-2'>PokéCheck</h1>
         <p className='text-gray-600 mb-6'>
           {error ? 'Something went wrong...' : 'Loading Pokémon data...'}
         </p>

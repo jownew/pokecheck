@@ -4,7 +4,7 @@
   
   <!-- Content -->
   <text x="600" y="200" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">
-    Pokédex
+    PokéCheck
   </text>
   
   <text x="600" y="280" font-family="Arial, sans-serif" font-size="40" fill="#e0e7ff" text-anchor="middle">
@@ -12,7 +12,7 @@
   </text>
   
   <text x="600" y="350" font-family="Arial, sans-serif" font-size="24" fill="#cbd5e1" text-anchor="middle">
-    A comprehensive mobile-responsive Pokédex app
+    A comprehensive mobile-responsive PokéCheck app
   </text>
   
   <text x="600" y="380" font-family="Arial, sans-serif" font-size="24" fill="#cbd5e1" text-anchor="middle">

@@ -1,8 +1,8 @@
-# Pokédex - Explore Pokémon
+# PokéCheck - Explore Pokémon
 
-A comprehensive, mobile-responsive Pokédex application built with Next.js that allows users to search and explore Pokémon with detailed information, stats, moves, and evolution chains.
+A comprehensive, mobile-responsive PokéCheck application built with Next.js that allows users to search and explore Pokémon with detailed information, stats, moves, and evolution chains.
 
-![Pokédex App](https://img.shields.io/badge/Next.js-15.5.3-black?style=for-the-badge&logo=next.js)
+![PokéCheck App](https://img.shields.io/badge/Next.js-15.5.3-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19.1.0-blue?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?style=for-the-badge&logo=typescript)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.x-38B2AC?style=for-the-badge&logo=tailwind-css)
@@ -11,7 +11,7 @@ A comprehensive, mobile-responsive Pokédex application built with Next.js that 
 
 ### 🔍 **Search & Filter**
 
-- **Smart Search**: Search Pokémon by name, type, or Pokédex number
+- **Smart Search**: Search Pokémon by name, type, or PokéCheck number
 - **Type Filtering**: Filter by Pokémon types (Fire, Water, Grass, etc.)
 - **Generation Filtering**: Browse Pokémon by generation (Gen 1-9)
 - **Real-time Results**: Instant search results as you type
@@ -116,7 +116,7 @@ A comprehensive, mobile-responsive Pokédex application built with Next.js that 
 src/
 ├── app/                    # Next.js App Router
 │   ├── layout.tsx         # Root layout with PWA setup
-│   ├── page.tsx           # Main Pokédex page
+│   ├── page.tsx           # Main PokéCheck page
 │   ├── globals.css        # Global styles
 │   └── viewport.ts        # Viewport configuration
 ├── components/            # React components
@@ -142,7 +142,7 @@ src/
 
 This application uses the [Pokémon GO API](https://pokemon-go-api.github.io/pokemon-go-api/) which provides:
 
-- Complete Pokédex data for all generations
+- Complete PokéCheck data for all generations
 - Pokémon stats, types, and moves
 - High-quality images and sprites
 - Evolution chain information
@@ -158,7 +158,7 @@ This application uses the [Pokémon GO API](https://pokemon-go-api.github.io/pok
 ### **Desktop (Chrome/Edge)**
 
 1. Click the install icon in the address bar
-2. Or use the browser menu: "Install Pokédex"
+2. Or use the browser menu: "Install PokéCheck"
 
 ## 🔄 Caching Strategy
 

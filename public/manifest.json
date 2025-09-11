@@ -1,7 +1,7 @@
 {
-  "name": "Pokédex - Explore Pokémon",
-  "short_name": "Pokédex",
-  "description": "A comprehensive mobile-responsive Pokédex app to search and explore Pokémon",
+  "name": "PokéCheck - Explore Pokémon",
+  "short_name": "PokéCheck",
+  "description": "A comprehensive mobile-responsive PokéCheck app to search and explore Pokémon",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

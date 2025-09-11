@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://pokecheck-seven.vercel.app/sitemap.xml
+
+# Disallow admin or private areas if any
+# Disallow: /admin/
+# Disallow: /private/
+
+# Allow all crawlers to access the main content
+Allow: /
+Allow: /manifest.json
+Allow: /og-image.png
+Allow: /favicon.ico

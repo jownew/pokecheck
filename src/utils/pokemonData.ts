@@ -1,4 +1,4 @@
-import { Pokemon, PokemonApiResponse, LoadingState } from '@/types/pokemon';
+import { Pokemon, PokemonApiResponse } from '@/types/pokemon';
 
 const POKEMON_API_URL =
   'https://pokemon-go-api.github.io/pokemon-go-api/api/pokedex.json';
@@ -89,33 +89,35 @@ export const getCachedPokemonData = (): Pokemon[] | null => {
     const parsedData = JSON.parse(cachedData);
 
     // Handle both compressed and full data formats
-    return parsedData.map((pokemon: any) => ({
-      ...pokemon,
-      // Ensure proper structure for compressed data
-      names: pokemon.names || { English: pokemon.name || 'Unknown' },
-      primaryType: pokemon.primaryType?.names
-        ? pokemon.primaryType
-        : {
-            names: {
-              English:
-                pokemon.primaryType?.names?.English ||
-                pokemon.primaryType ||
-                'Normal',
-            },
-          },
-      secondaryType: pokemon.secondaryType?.names
-        ? pokemon.secondaryType
-        : pokemon.secondaryType
-        ? { names: { English: pokemon.secondaryType } }
-        : null,
-      assets: pokemon.assets?.image
-        ? pokemon.assets
-        : pokemon.assets
-        ? { image: pokemon.assets }
-        : null,
-      evolutions: pokemon.evolutions || [],
-      moves: pokemon.moves || [],
-    }));
+    return parsedData.map(
+      (pokemon: Partial<Pokemon> & { name?: string; moves?: unknown }) =>
+        ({
+          ...pokemon,
+          // Ensure proper structure for compressed data
+          names: pokemon.names || { English: pokemon.name || 'Unknown' },
+          primaryType: pokemon.primaryType?.names
+            ? pokemon.primaryType
+            : {
+                names: {
+                  English:
+                    pokemon.primaryType?.names?.English ||
+                    (pokemon.primaryType as unknown as string) ||
+                    'Normal',
+                },
+              },
+          secondaryType: pokemon.secondaryType?.names
+            ? pokemon.secondaryType
+            : pokemon.secondaryType
+            ? { names: { English: pokemon.secondaryType as unknown as string } }
+            : null,
+          assets: pokemon.assets?.image
+            ? pokemon.assets
+            : pokemon.assets
+            ? { image: pokemon.assets as unknown as string }
+            : null,
+          evolutions: pokemon.evolutions || [],
+        } as Pokemon)
+    );
   } catch (error) {
     console.error('Error parsing cached Pokémon data:', error);
     // Clear corrupted cache

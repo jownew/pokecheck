@@ -67,7 +67,7 @@ export default function Home() {
   // Handle search
   const handleSearch = (searchTerm: string) => {
     if (searchTerm.trim()) {
-      let filtered = searchPokemon(allPokemon, searchTerm);
+      const filtered = searchPokemon(allPokemon, searchTerm);
       setFilteredPokemon(filtered);
       setShowDashboard(false);
     } else {
@@ -79,7 +79,7 @@ export default function Home() {
   // Handle type filter
   const handleTypeFilter = (type: string) => {
     if (type !== 'all') {
-      let filtered = filterByType(allPokemon, type);
+      const filtered = filterByType(allPokemon, type);
       setFilteredPokemon(filtered);
       setShowDashboard(false);
     } else {
@@ -91,7 +91,7 @@ export default function Home() {
   // Handle generation filter
   const handleGenerationFilter = (generation: number | null) => {
     if (generation) {
-      let filtered = filterByGeneration(allPokemon, generation);
+      const filtered = filterByGeneration(allPokemon, generation);
       setFilteredPokemon(filtered);
       setShowDashboard(false);
     } else {
@@ -108,14 +108,14 @@ export default function Home() {
 
   // Handle quick filter from dashboard
   const handleQuickFilter = (type: string) => {
-    let filtered = filterByType(allPokemon, type);
+    const filtered = filterByType(allPokemon, type);
     setFilteredPokemon(filtered);
     setShowDashboard(false);
   };
 
   // Handle generation filter from dashboard
   const handleDashboardGenerationFilter = (generation: number) => {
-    let filtered = filterByGeneration(allPokemon, generation);
+    const filtered = filterByGeneration(allPokemon, generation);
     setFilteredPokemon(filtered);
     setShowDashboard(false);
   };

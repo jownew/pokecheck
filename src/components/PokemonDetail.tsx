@@ -18,7 +18,9 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
   onClose,
   onPokemonSelect,
 }) => {
-  const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'evolution'>('stats');
+  const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'evolution'>(
+    'stats'
+  );
   const [imageError, setImageError] = useState(false);
 
   // Get the primary image URL
@@ -45,10 +47,10 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
   // Get evolution chain
   const getEvolutionChain = () => {
     const evolutionChain: Pokemon[] = [pokemon];
-    
+
     // Add evolutions
-    pokemon.evolutions.forEach(evo => {
-      const evolvedPokemon = allPokemon.find(p => p.id === evo.id);
+    pokemon.evolutions.forEach((evo) => {
+      const evolvedPokemon = allPokemon.find((p) => p.id === evo.id);
       if (evolvedPokemon) {
         evolutionChain.push(evolvedPokemon);
       }
@@ -67,41 +69,53 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
   const cinematicMoves = getMovesArray(pokemon.cinematicMoves);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
+      <div className='bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden'>
         {/* Header */}
-        <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 text-white p-6">
+        <div className='relative bg-gradient-to-br from-blue-500 to-purple-600 text-white p-6'>
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors"
+            className='absolute top-4 right-4 text-white hover:text-gray-200 transition-colors'
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className='w-6 h-6'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M6 18L18 6M6 6l12 12'
+              />
             </svg>
           </button>
 
-          <div className="flex items-center space-x-4">
-            <div className="relative">
+          <div className='flex items-center space-x-4'>
+            <div className='relative'>
               {!imageError ? (
                 <Image
                   src={getImageUrl(pokemon)}
                   alt={pokemon.names.English}
                   width={80}
                   height={80}
-                  className="object-contain"
+                  className='object-contain'
                   onError={() => setImageError(true)}
                 />
               ) : (
-                <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs">No Image</span>
+                <div className='w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center'>
+                  <span className='text-white text-xs'>No Image</span>
                 </div>
               )}
             </div>
-            
+
             <div>
-              <div className="text-sm opacity-80">{formatPokemonNumber(pokemon.dexNr)}</div>
-              <h1 className="text-2xl font-bold">{pokemon.names.English}</h1>
-              <div className="flex gap-2 mt-2">
+              <div className='text-sm opacity-80'>
+                {formatPokemonNumber(pokemon.dexNr)}
+              </div>
+              <h1 className='text-2xl font-bold'>{pokemon.names.English}</h1>
+              <div className='flex gap-2 mt-2'>
                 <span
                   className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
                     pokemon.primaryType.names.English
@@ -124,7 +138,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b">
+        <div className='flex border-b'>
           {[
             { id: 'stats', label: 'Stats' },
             { id: 'moves', label: 'Moves' },
@@ -132,7 +146,9 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() =>
+                setActiveTab(tab.id as 'stats' | 'moves' | 'evolution')
+              }
               className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${
                 activeTab === tab.id
                   ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
@@ -145,48 +161,66 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-96 overflow-y-auto">
+        <div className='p-6 max-h-96 overflow-y-auto'>
           {/* Stats Tab */}
           {activeTab === 'stats' && (
-            <div className="space-y-6">
+            <div className='space-y-6'>
               <div>
-                <h3 className="text-lg font-semibold mb-4">Base Stats</h3>
-                <div className="space-y-4">
+                <h3 className='text-lg font-semibold mb-4'>Base Stats</h3>
+                <div className='space-y-4'>
                   <div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-700">HP (Stamina)</span>
-                      <span className="text-sm font-bold">{pokemon.stats.stamina}</span>
+                    <div className='flex justify-between mb-1'>
+                      <span className='text-sm font-medium text-gray-700'>
+                        HP (Stamina)
+                      </span>
+                      <span className='text-sm font-bold'>
+                        {pokemon.stats.stamina}
+                      </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className='w-full bg-gray-200 rounded-full h-2'>
                       <div
-                        className="bg-green-500 h-2 rounded-full"
-                        style={{ width: `${(pokemon.stats.stamina / 250) * 100}%` }}
+                        className='bg-green-500 h-2 rounded-full'
+                        style={{
+                          width: `${(pokemon.stats.stamina / 250) * 100}%`,
+                        }}
                       ></div>
                     </div>
                   </div>
 
                   <div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-700">Attack</span>
-                      <span className="text-sm font-bold">{pokemon.stats.attack}</span>
+                    <div className='flex justify-between mb-1'>
+                      <span className='text-sm font-medium text-gray-700'>
+                        Attack
+                      </span>
+                      <span className='text-sm font-bold'>
+                        {pokemon.stats.attack}
+                      </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className='w-full bg-gray-200 rounded-full h-2'>
                       <div
-                        className="bg-red-500 h-2 rounded-full"
-                        style={{ width: `${(pokemon.stats.attack / 350) * 100}%` }}
+                        className='bg-red-500 h-2 rounded-full'
+                        style={{
+                          width: `${(pokemon.stats.attack / 350) * 100}%`,
+                        }}
                       ></div>
                     </div>
                   </div>
 
                   <div>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-sm font-medium text-gray-700">Defense</span>
-                      <span className="text-sm font-bold">{pokemon.stats.defense}</span>
+                    <div className='flex justify-between mb-1'>
+                      <span className='text-sm font-medium text-gray-700'>
+                        Defense
+                      </span>
+                      <span className='text-sm font-bold'>
+                        {pokemon.stats.defense}
+                      </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className='w-full bg-gray-200 rounded-full h-2'>
                       <div
-                        className="bg-blue-500 h-2 rounded-full"
-                        style={{ width: `${(pokemon.stats.defense / 350) * 100}%` }}
+                        className='bg-blue-500 h-2 rounded-full'
+                        style={{
+                          width: `${(pokemon.stats.defense / 350) * 100}%`,
+                        }}
                       ></div>
                     </div>
                   </div>
@@ -194,16 +228,20 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold mb-2">Additional Info</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <h3 className='text-lg font-semibold mb-2'>Additional Info</h3>
+                <div className='grid grid-cols-2 gap-4 text-sm'>
                   <div>
-                    <span className="text-gray-600">Generation:</span>
-                    <span className="ml-2 font-medium">{pokemon.generation}</span>
+                    <span className='text-gray-600'>Generation:</span>
+                    <span className='ml-2 font-medium'>
+                      {pokemon.generation}
+                    </span>
                   </div>
                   {pokemon.pokemonClass && (
                     <div>
-                      <span className="text-gray-600">Class:</span>
-                      <span className="ml-2 font-medium">{pokemon.pokemonClass.replace('POKEMON_CLASS_', '')}</span>
+                      <span className='text-gray-600'>Class:</span>
+                      <span className='ml-2 font-medium'>
+                        {pokemon.pokemonClass.replace('POKEMON_CLASS_', '')}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -213,15 +251,15 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
 
           {/* Moves Tab */}
           {activeTab === 'moves' && (
-            <div className="space-y-6">
+            <div className='space-y-6'>
               <div>
-                <h3 className="text-lg font-semibold mb-4">Quick Moves</h3>
-                <div className="space-y-2">
+                <h3 className='text-lg font-semibold mb-4'>Quick Moves</h3>
+                <div className='space-y-2'>
                   {quickMoves.map((move) => (
-                    <div key={move.id} className="bg-gray-50 rounded-lg p-3">
-                      <div className="flex justify-between items-start">
+                    <div key={move.id} className='bg-gray-50 rounded-lg p-3'>
+                      <div className='flex justify-between items-start'>
                         <div>
-                          <h4 className="font-medium">{move.names.English}</h4>
+                          <h4 className='font-medium'>{move.names.English}</h4>
                           <span
                             className={`inline-block px-2 py-1 rounded text-xs text-white mt-1 ${getTypeColor(
                               move.type.names.English
@@ -230,7 +268,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                             {move.type.names.English}
                           </span>
                         </div>
-                        <div className="text-right text-sm">
+                        <div className='text-right text-sm'>
                           <div>Power: {move.power}</div>
                           <div>Energy: {move.energy}</div>
                         </div>
@@ -241,13 +279,13 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold mb-4">Cinematic Moves</h3>
-                <div className="space-y-2">
+                <h3 className='text-lg font-semibold mb-4'>Cinematic Moves</h3>
+                <div className='space-y-2'>
                   {cinematicMoves.map((move) => (
-                    <div key={move.id} className="bg-gray-50 rounded-lg p-3">
-                      <div className="flex justify-between items-start">
+                    <div key={move.id} className='bg-gray-50 rounded-lg p-3'>
+                      <div className='flex justify-between items-start'>
                         <div>
-                          <h4 className="font-medium">{move.names.English}</h4>
+                          <h4 className='font-medium'>{move.names.English}</h4>
                           <span
                             className={`inline-block px-2 py-1 rounded text-xs text-white mt-1 ${getTypeColor(
                               move.type.names.English
@@ -256,7 +294,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                             {move.type.names.English}
                           </span>
                         </div>
-                        <div className="text-right text-sm">
+                        <div className='text-right text-sm'>
                           <div>Power: {move.power}</div>
                           <div>Energy: {move.energy}</div>
                         </div>
@@ -271,31 +309,43 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
           {/* Evolution Tab */}
           {activeTab === 'evolution' && (
             <div>
-              <h3 className="text-lg font-semibold mb-4">Evolution Chain</h3>
+              <h3 className='text-lg font-semibold mb-4'>Evolution Chain</h3>
               {evolutionChain.length > 1 ? (
-                <div className="space-y-4">
+                <div className='space-y-4'>
                   {evolutionChain.map((evo, index) => (
-                    <div key={evo.id} className="flex items-center space-x-4">
+                    <div key={evo.id} className='flex items-center space-x-4'>
                       <div
                         onClick={() => onPokemonSelect(evo)}
-                        className="flex items-center space-x-3 bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-colors flex-1"
+                        className='flex items-center space-x-3 bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-colors flex-1'
                       >
                         <Image
                           src={getImageUrl(evo)}
                           alt={evo.names.English}
                           width={48}
                           height={48}
-                          className="object-contain"
+                          className='object-contain'
                         />
                         <div>
-                          <div className="font-medium">{evo.names.English}</div>
-                          <div className="text-sm text-gray-600">{formatPokemonNumber(evo.dexNr)}</div>
+                          <div className='font-medium'>{evo.names.English}</div>
+                          <div className='text-sm text-gray-600'>
+                            {formatPokemonNumber(evo.dexNr)}
+                          </div>
                         </div>
                       </div>
                       {index < evolutionChain.length - 1 && (
-                        <div className="text-gray-400">
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <div className='text-gray-400'>
+                          <svg
+                            className='w-6 h-6'
+                            fill='none'
+                            stroke='currentColor'
+                            viewBox='0 0 24 24'
+                          >
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M9 5l7 7-7 7'
+                            />
                           </svg>
                         </div>
                       )}
@@ -303,7 +353,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-600">This Pokémon does not evolve.</p>
+                <p className='text-gray-600'>This Pokémon does not evolve.</p>
               )}
             </div>
           )}

@@ -54,11 +54,6 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
     return typeColors[typeName] || 'bg-gray-400';
   };
 
-  // Calculate total stats for the progress bar
-  const totalStats =
-    pokemon.stats.stamina + pokemon.stats.attack + pokemon.stats.defense;
-  const maxPossibleStats = 300; // Approximate max for display purposes
-
   return (
     <div
       onClick={() => onClick(pokemon)}

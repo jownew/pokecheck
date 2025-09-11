@@ -1,103 +1,198 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Pokemon } from '@/types/pokemon';
+import {
+  getPokemonData,
+  searchPokemon,
+  filterByType,
+  filterByGeneration,
+  clearCache,
+  getStorageInfo,
+} from '@/utils/pokemonData';
+import LoadingScreen from '@/components/LoadingScreen';
+import SearchAndFilter from '@/components/SearchAndFilter';
+import PokemonCard from '@/components/PokemonCard';
+import PokemonDetail from '@/components/PokemonDetail';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
+  const [filteredPokemon, setFilteredPokemon] = useState<Pokemon[]>([]);
+  const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // Load Pokémon data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const data = await getPokemonData((progress) => {
+          setLoadingProgress(progress);
+        });
+
+        setAllPokemon(data);
+        setFilteredPokemon(data);
+      } catch (err) {
+        console.error('Error loading Pokémon data:', err);
+
+        // Check if it's a quota error and provide helpful message
+        let errorMessage = 'Failed to load Pokémon data';
+        if (err instanceof Error) {
+          if (
+            err.message.includes('quota') ||
+            err.message.includes('storage')
+          ) {
+            const storageInfo = getStorageInfo();
+            errorMessage = `Storage quota exceeded (${storageInfo.percentage}% used). Try clearing browser data or use incognito mode.`;
+          } else {
+            errorMessage = err.message;
+          }
+        }
+
+        setError(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  // Handle search
+  const handleSearch = (searchTerm: string) => {
+    let filtered = searchPokemon(allPokemon, searchTerm);
+    setFilteredPokemon(filtered);
+  };
+
+  // Handle type filter
+  const handleTypeFilter = (type: string) => {
+    let filtered = allPokemon;
+    if (type !== 'all') {
+      filtered = filterByType(allPokemon, type);
+    }
+    setFilteredPokemon(filtered);
+  };
+
+  // Handle generation filter
+  const handleGenerationFilter = (generation: number | null) => {
+    let filtered = allPokemon;
+    if (generation) {
+      filtered = filterByGeneration(allPokemon, generation);
+    }
+    setFilteredPokemon(filtered);
+  };
+
+  // Handle clear filters
+  const handleClearFilters = () => {
+    setFilteredPokemon(allPokemon);
+  };
+
+  // Handle Pokémon card click
+  const handlePokemonClick = (pokemon: Pokemon) => {
+    setSelectedPokemon(pokemon);
+  };
+
+  // Handle close detail modal
+  const handleCloseDetail = () => {
+    setSelectedPokemon(null);
+  };
+
+  // Handle Pokémon selection from detail modal
+  const handlePokemonSelect = (pokemon: Pokemon) => {
+    setSelectedPokemon(pokemon);
+  };
+
+  // Retry function
+  const handleRetry = () => {
+    setError(null);
+    setLoadingProgress(0);
+    setIsLoading(true);
+
+    // Reload the page to restart the data loading process
+    window.location.reload();
+  };
+
+  // Clear cache function
+  const handleClearCache = () => {
+    clearCache();
+    const storageInfo = getStorageInfo();
+    console.log('Cache cleared. Storage info:', storageInfo);
+    handleRetry();
+  };
+
+  // Show loading screen while data is being fetched
+  if (isLoading) {
+    return (
+      <LoadingScreen
+        progress={loadingProgress}
+        error={error}
+        onRetry={handleRetry}
+        onClearCache={handleClearCache}
+      />
+    );
+  }
+
+  return (
+    <div className='min-h-screen bg-gray-50'>
+      {/* Header */}
+      <header className='bg-white shadow-sm border-b'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
+          <div className='flex items-center justify-between'>
+            <h1 className='text-2xl sm:text-3xl font-bold text-gray-900'>
+              Pokédex
+            </h1>
+            <div className='text-sm text-gray-600'>
+              {filteredPokemon.length} of {allPokemon.length} Pokémon
+            </div>
+          </div>
         </div>
+      </header>
+
+      {/* Main Content */}
+      <main className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
+        {/* Search and Filter */}
+        <SearchAndFilter
+          pokemonList={allPokemon}
+          onSearch={handleSearch}
+          onTypeFilter={handleTypeFilter}
+          onGenerationFilter={handleGenerationFilter}
+          onClearFilters={handleClearFilters}
+        />
+
+        {/* Pokémon Grid */}
+        {filteredPokemon.length > 0 ? (
+          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6'>
+            {filteredPokemon.map((pokemon) => (
+              <PokemonCard
+                key={pokemon.id}
+                pokemon={pokemon}
+                onClick={handlePokemonClick}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className='text-center py-12'>
+            <div className='text-gray-500 text-lg'>No Pokémon found</div>
+            <div className='text-gray-400 text-sm mt-2'>
+              Try adjusting your search or filters
+            </div>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+      {/* Pokémon Detail Modal */}
+      {selectedPokemon && (
+        <PokemonDetail
+          pokemon={selectedPokemon}
+          allPokemon={allPokemon}
+          onClose={handleCloseDetail}
+          onPokemonSelect={handlePokemonSelect}
+        />
+      )}
     </div>
   );
 }

@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Pokemon, Move } from '@/types/pokemon';
+import { Pokemon, Move, Evolution } from '@/types/pokemon';
 import { typeColors } from './PokemonCard';
+import { getPreEvolutions, getEvolutions } from '@/utils/evolutionChain';
 
 interface PokemonDetailProps {
   pokemon: Pokemon;
@@ -44,24 +45,48 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
     return typeColors[typeName] || 'bg-gray-400';
   };
 
-  // Get evolution chain
+  // Get evolution chain including previous and next stages
   const getEvolutionChain = () => {
-    const evolutionChain: Pokemon[] = [pokemon];
+    const chain: Pokemon[] = [];
 
-    // Add evolutions
-    pokemon.evolutions.forEach((evo) => {
-      const evolvedPokemon = allPokemon.find((p) => p.id === evo.id);
-      if (evolvedPokemon) {
-        evolutionChain.push(evolvedPokemon);
-      }
-    });
+    // Walk backwards to base form (choose the first path when multiple exist)
+    let current: Pokemon = pokemon;
+    const visited = new Set<string>();
+    while (true) {
+      const preEvos = getPreEvolutions(current, allPokemon);
+      if (!preEvos || preEvos.length === 0) break;
+      const prev = preEvos[0];
+      if (visited.has(prev.id)) break;
+      chain.unshift(prev);
+      visited.add(prev.id);
+      current = prev;
+    }
 
-    return evolutionChain;
+    // Add current
+    chain.push(pokemon);
+
+    // Add next evolutions (direct only)
+    const nextEvos = getEvolutions(pokemon, allPokemon);
+
+    nextEvos.forEach((mon) => chain.push(mon));
+
+    return chain;
   };
 
   // Convert moves object to array
   const getMovesArray = (moves: Record<string, Move>) => {
     return Object.values(moves);
+  };
+
+  // Get formatted requirements between two stages if there's a direct evolution
+  // Get raw evolution requirement (Evolution object) between two stages
+  const getEvolutionRequirementBetween = (
+    from: Pokemon,
+    to: Pokemon
+  ): Evolution | null => {
+    if (!from || !to) return null;
+    const evo = from.evolutions.find((e) => e.id === to.id);
+    return evo ?? null;
   };
 
   const evolutionChain = getEvolutionChain();
@@ -332,23 +357,51 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                           </div>
                         </div>
                       </div>
-                      {index < evolutionChain.length - 1 && (
-                        <div className='text-gray-400'>
-                          <svg
-                            className='w-6 h-6'
-                            fill='none'
-                            stroke='currentColor'
-                            viewBox='0 0 24 24'
-                          >
-                            <path
-                              strokeLinecap='round'
-                              strokeLinejoin='round'
-                              strokeWidth={2}
-                              d='M9 5l7 7-7 7'
-                            />
-                          </svg>
-                        </div>
-                      )}
+                      {index < evolutionChain.length - 1 &&
+                        (() => {
+                          const req = getEvolutionRequirementBetween(
+                            evolutionChain[index],
+                            evolutionChain[index + 1]
+                          );
+                          return (
+                            <div className='text-gray-400 flex flex-col items-center min-w-[1.5rem]'>
+                              <svg
+                                className='w-6 h-6'
+                                fill='none'
+                                stroke='currentColor'
+                                viewBox='0 0 24 24'
+                              >
+                                <path
+                                  strokeLinecap='round'
+                                  strokeLinejoin='round'
+                                  strokeWidth={2}
+                                  d='M9 5l7 7-7 7'
+                                />
+                              </svg>
+                              {req && (
+                                <div className='flex flex-wrap justify-center gap-1 mt-1'>
+                                  {req.candies > 0 && (
+                                    <span className='px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-700 border border-blue-200'>
+                                      {req.candies} candies
+                                    </span>
+                                  )}
+                                  {req.item && (
+                                    <span className='px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-700 border border-purple-200'>
+                                      {req.item
+                                        .replace(/_/g, ' ')
+                                        .toLowerCase()}
+                                    </span>
+                                  )}
+                                  {req.quests && req.quests.length > 0 && (
+                                    <span className='px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200'>
+                                      special quest
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
                     </div>
                   ))}
                 </div>

@@ -14,6 +14,7 @@ import LoadingScreen from '@/components/LoadingScreen';
 import SearchAndFilter from '@/components/SearchAndFilter';
 import PokemonCard from '@/components/PokemonCard';
 import PokemonDetail from '@/components/PokemonDetail';
+import Dashboard from '@/components/Dashboard';
 
 export default function Home() {
   const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
@@ -22,6 +23,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [showDashboard, setShowDashboard] = useState(true);
 
   // Load Pokémon data on component mount
   useEffect(() => {
@@ -35,7 +37,7 @@ export default function Home() {
         });
 
         setAllPokemon(data);
-        setFilteredPokemon(data);
+        setFilteredPokemon([]);
       } catch (err) {
         console.error('Error loading Pokémon data:', err);
 
@@ -64,31 +66,58 @@ export default function Home() {
 
   // Handle search
   const handleSearch = (searchTerm: string) => {
-    let filtered = searchPokemon(allPokemon, searchTerm);
-    setFilteredPokemon(filtered);
+    if (searchTerm.trim()) {
+      let filtered = searchPokemon(allPokemon, searchTerm);
+      setFilteredPokemon(filtered);
+      setShowDashboard(false);
+    } else {
+      setFilteredPokemon([]);
+      setShowDashboard(true);
+    }
   };
 
   // Handle type filter
   const handleTypeFilter = (type: string) => {
-    let filtered = allPokemon;
     if (type !== 'all') {
-      filtered = filterByType(allPokemon, type);
+      let filtered = filterByType(allPokemon, type);
+      setFilteredPokemon(filtered);
+      setShowDashboard(false);
+    } else {
+      setFilteredPokemon([]);
+      setShowDashboard(true);
     }
-    setFilteredPokemon(filtered);
   };
 
   // Handle generation filter
   const handleGenerationFilter = (generation: number | null) => {
-    let filtered = allPokemon;
     if (generation) {
-      filtered = filterByGeneration(allPokemon, generation);
+      let filtered = filterByGeneration(allPokemon, generation);
+      setFilteredPokemon(filtered);
+      setShowDashboard(false);
+    } else {
+      setFilteredPokemon([]);
+      setShowDashboard(true);
     }
-    setFilteredPokemon(filtered);
   };
 
   // Handle clear filters
   const handleClearFilters = () => {
-    setFilteredPokemon(allPokemon);
+    setFilteredPokemon([]);
+    setShowDashboard(true);
+  };
+
+  // Handle quick filter from dashboard
+  const handleQuickFilter = (type: string) => {
+    let filtered = filterByType(allPokemon, type);
+    setFilteredPokemon(filtered);
+    setShowDashboard(false);
+  };
+
+  // Handle generation filter from dashboard
+  const handleDashboardGenerationFilter = (generation: number) => {
+    let filtered = filterByGeneration(allPokemon, generation);
+    setFilteredPokemon(filtered);
+    setShowDashboard(false);
   };
 
   // Handle Pokémon card click
@@ -146,7 +175,9 @@ export default function Home() {
               Pokédex
             </h1>
             <div className='text-sm text-gray-600'>
-              {filteredPokemon.length} of {allPokemon.length} Pokémon
+              {showDashboard
+                ? `${allPokemon.length} Pokémon available`
+                : `${filteredPokemon.length} of ${allPokemon.length} Pokémon`}
             </div>
           </div>
         </div>
@@ -163,8 +194,14 @@ export default function Home() {
           onClearFilters={handleClearFilters}
         />
 
-        {/* Pokémon Grid */}
-        {filteredPokemon.length > 0 ? (
+        {/* Dashboard or Pokémon Grid */}
+        {showDashboard ? (
+          <Dashboard
+            allPokemon={allPokemon}
+            onQuickFilter={handleQuickFilter}
+            onGenerationFilter={handleDashboardGenerationFilter}
+          />
+        ) : filteredPokemon.length > 0 ? (
           <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6'>
             {filteredPokemon.map((pokemon) => (
               <PokemonCard

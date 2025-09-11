@@ -226,10 +226,10 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                 <div className='space-y-4'>
                   <div>
                     <div className='flex justify-between mb-1'>
-                      <span className='text-sm font-medium text-gray-700'>
+                      <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
                         HP (Stamina)
                       </span>
-                      <span className='text-sm font-bold'>
+                      <span className='text-sm font-bold text-gray-900 dark:text-gray-100'>
                         {pokemon.stats.stamina}
                       </span>
                     </div>
@@ -245,10 +245,10 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
 
                   <div>
                     <div className='flex justify-between mb-1'>
-                      <span className='text-sm font-medium text-gray-700'>
+                      <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
                         Attack
                       </span>
-                      <span className='text-sm font-bold'>
+                      <span className='text-sm font-bold text-gray-900 dark:text-gray-100'>
                         {pokemon.stats.attack}
                       </span>
                     </div>
@@ -264,10 +264,10 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
 
                   <div>
                     <div className='flex justify-between mb-1'>
-                      <span className='text-sm font-medium text-gray-700'>
+                      <span className='text-sm font-medium text-gray-700 dark:text-gray-300'>
                         Defense
                       </span>
-                      <span className='text-sm font-bold'>
+                      <span className='text-sm font-bold text-gray-900 dark:text-gray-100'>
                         {pokemon.stats.defense}
                       </span>
                     </div>

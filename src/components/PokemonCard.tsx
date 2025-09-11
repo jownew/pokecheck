@@ -134,8 +134,10 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
         <div className='space-y-2'>
           {/* HP/Stamina */}
           <div className='flex items-center justify-between text-xs'>
-            <span className='text-gray-600 font-medium'>HP</span>
-            <span className='font-bold text-gray-800'>
+            <span className='text-gray-600 dark:text-gray-300 font-medium'>
+              HP
+            </span>
+            <span className='font-bold text-gray-800 dark:text-gray-100'>
               {pokemon.stats.stamina}
             </span>
           </div>
@@ -148,8 +150,10 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
 
           {/* Attack */}
           <div className='flex items-center justify-between text-xs'>
-            <span className='text-gray-600 font-medium'>ATK</span>
-            <span className='font-bold text-gray-800'>
+            <span className='text-gray-600 dark:text-gray-300 font-medium'>
+              ATK
+            </span>
+            <span className='font-bold text-gray-800 dark:text-gray-100'>
               {pokemon.stats.attack}
             </span>
           </div>
@@ -162,8 +166,10 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
 
           {/* Defense */}
           <div className='flex items-center justify-between text-xs'>
-            <span className='text-gray-600 font-medium'>DEF</span>
-            <span className='font-bold text-gray-800'>
+            <span className='text-gray-600 dark:text-gray-300 font-medium'>
+              DEF
+            </span>
+            <span className='font-bold text-gray-800 dark:text-gray-100'>
               {pokemon.stats.defense}
             </span>
           </div>

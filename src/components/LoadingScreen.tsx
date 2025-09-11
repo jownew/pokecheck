@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { resetAppFreshReload } from '@/utils/resetApp';
 
 interface LoadingScreenProps {
   progress: number;
@@ -47,7 +48,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
             <p className='text-red-600 text-sm mb-3'>{error}</p>
             <div className='flex gap-2 justify-center'>
               <button
-                onClick={onRetry || (() => window.location.reload())}
+                onClick={onRetry || resetAppFreshReload}
                 className='px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm'
               >
                 Try Again

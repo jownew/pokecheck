@@ -7,10 +7,10 @@ import {
   searchPokemon,
   filterByType,
   filterByGeneration,
-  clearCache,
   getStorageInfo,
 } from '@/utils/pokemonData';
 import LoadingScreen from '@/components/LoadingScreen';
+import { resetAppFreshReload, confirmResetAndReload } from '@/utils/resetApp';
 import SearchAndFilter from '@/components/SearchAndFilter';
 import PokemonCard from '@/components/PokemonCard';
 import PokemonDetail from '@/components/PokemonDetail';
@@ -136,21 +136,18 @@ export default function Home() {
   };
 
   // Retry function
-  const handleRetry = () => {
+  const handleRetry = async () => {
     setError(null);
     setLoadingProgress(0);
     setIsLoading(true);
 
-    // Reload the page to restart the data loading process
-    window.location.reload();
+    // Reset caches and reload fresh
+    await resetAppFreshReload();
   };
 
   // Clear cache function
-  const handleClearCache = () => {
-    clearCache();
-    const storageInfo = getStorageInfo();
-    console.log('Cache cleared. Storage info:', storageInfo);
-    handleRetry();
+  const handleClearCache = async () => {
+    await resetAppFreshReload();
   };
 
   // Show loading screen while data is being fetched
@@ -174,10 +171,20 @@ export default function Home() {
             <h1 className='text-2xl sm:text-3xl font-bold text-gray-900'>
               Pokédex
             </h1>
-            <div className='text-sm text-gray-600'>
-              {showDashboard
-                ? `${allPokemon.length} Pokémon available`
-                : `${filteredPokemon.length} of ${allPokemon.length} Pokémon`}
+            <div className='flex items-center gap-3'>
+              <div className='text-sm text-gray-600'>
+                {showDashboard
+                  ? `${allPokemon.length} Pokémon available`
+                  : `${filteredPokemon.length} of ${allPokemon.length} Pokémon`}
+              </div>
+              <button
+                onClick={confirmResetAndReload}
+                className='text-xs sm:text-sm text-gray-500 hover:text-gray-800 underline'
+                title='Clear caches and reload app'
+                aria-label='Reset app (fresh reload)'
+              >
+                Reset app (fresh)
+              </button>
             </div>
           </div>
         </div>

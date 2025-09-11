@@ -214,7 +214,22 @@ export const fetchPokemonData = async (
   try {
     onProgress?.(10);
 
-    const response = await fetch(POKEMON_API_URL);
+    const isBrowser = typeof window !== 'undefined';
+    const freshFlag = isBrowser
+      ? sessionStorage.getItem('pokecheck_fresh')
+      : null;
+    if (freshFlag && isBrowser) {
+      try {
+        sessionStorage.removeItem('pokecheck_fresh');
+      } catch {}
+    }
+    const url = freshFlag
+      ? `${POKEMON_API_URL}?t=${Date.now()}`
+      : POKEMON_API_URL;
+    const response = await fetch(
+      url,
+      freshFlag ? { cache: 'no-store' } : undefined
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

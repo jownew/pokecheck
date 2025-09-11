@@ -78,6 +78,37 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
     return Object.values(moves);
   };
 
+  // Normalize item field which may be string/object/number depending on data
+  const normalizeItemName = (item: unknown): string | null => {
+    if (item == null) return null;
+    if (typeof item === 'string') return item;
+    if (typeof item === 'number') return String(item);
+    if (typeof item === 'object') {
+      const obj = item as Record<string, unknown>;
+      const id =
+        typeof obj['id'] === 'string' ? (obj['id'] as string) : undefined;
+      const name =
+        typeof obj['name'] === 'string' ? (obj['name'] as string) : undefined;
+      const names = obj['names'] as Record<string, unknown> | undefined;
+      const Names = obj['Names'] as Record<string, unknown> | undefined;
+      const namesEnglish =
+        names && typeof names['English'] === 'string'
+          ? (names['English'] as string)
+          : undefined;
+      const NamesEnglish =
+        Names && typeof Names['English'] === 'string'
+          ? (Names['English'] as string)
+          : undefined;
+      const english =
+        typeof obj['English'] === 'string'
+          ? (obj['English'] as string)
+          : undefined;
+      const candidate = id ?? name ?? namesEnglish ?? NamesEnglish ?? english;
+      return candidate ?? null;
+    }
+    return null;
+  };
+
   // Get formatted requirements between two stages if there's a direct evolution
   // Get raw evolution requirement (Evolution object) between two stages
   const getEvolutionRequirementBetween = (
@@ -85,8 +116,8 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
     to: Pokemon
   ): Evolution | null => {
     if (!from || !to) return null;
-    const evo = from.evolutions.find((e) => e.id === to.id);
-    return evo ?? null;
+    const evo = from.evolutions?.find((e) => e.id === to.id);
+    return evo || null;
   };
 
   const evolutionChain = getEvolutionChain();
@@ -363,6 +394,9 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                             evolutionChain[index],
                             evolutionChain[index + 1]
                           );
+                          const itemName = normalizeItemName(
+                            req?.item as unknown
+                          );
                           return (
                             <div className='text-gray-400 flex flex-col items-center min-w-[1.5rem]'>
                               <svg
@@ -380,20 +414,32 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                               </svg>
                               {req && (
                                 <div className='flex flex-wrap justify-center gap-1 mt-1'>
-                                  {req.candies > 0 && (
+                                  {Number(req.candies) > 0 && (
                                     <span className='px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-700 border border-blue-200'>
-                                      {req.candies} candies
+                                      <span aria-hidden='true'>🍬</span>
+                                      <span className='sr-only'>
+                                        candies:
+                                      </span>{' '}
+                                      {Number(req.candies)} candies
                                     </span>
                                   )}
-                                  {req.item && (
+                                  {itemName && (
                                     <span className='px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-700 border border-purple-200'>
-                                      {req.item
+                                      <span aria-hidden='true'>🪙</span>
+                                      <span className='sr-only'>
+                                        item:
+                                      </span>{' '}
+                                      {itemName
                                         .replace(/_/g, ' ')
                                         .toLowerCase()}
                                     </span>
                                   )}
                                   {req.quests && req.quests.length > 0 && (
                                     <span className='px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200'>
+                                      <span aria-hidden='true'>⭐</span>
+                                      <span className='sr-only'>
+                                        special quest
+                                      </span>{' '}
                                       special quest
                                     </span>
                                   )}

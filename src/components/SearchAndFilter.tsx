@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pokemon } from '@/types/pokemon';
 import { getUniqueTypes, getUniqueGenerations } from '@/utils/pokemonData';
 
@@ -29,10 +29,18 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   const uniqueTypes = getUniqueTypes(pokemonList);
   const uniqueGenerations = getUniqueGenerations(pokemonList);
 
+  // Debounce search functionality
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      onSearch(searchTerm);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, onSearch]);
+
   // Handle search input changes
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
-    onSearch(value);
   };
 
   // Handle type filter changes

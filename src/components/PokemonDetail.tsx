@@ -126,7 +126,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
 
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'>
-      <div className='bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden'>
+      <div className='bg-white dark:bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden'>
         {/* Header */}
         <div className='relative bg-gradient-to-br from-blue-500 to-purple-600 text-white p-6'>
           <button
@@ -207,8 +207,8 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
               }
               className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-blue-50 dark:bg-blue-900'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
               }`}
             >
               {tab.label}
@@ -233,7 +233,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                         {pokemon.stats.stamina}
                       </span>
                     </div>
-                    <div className='w-full bg-gray-200 rounded-full h-2'>
+                    <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
                       <div
                         className='bg-green-500 h-2 rounded-full'
                         style={{
@@ -252,7 +252,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                         {pokemon.stats.attack}
                       </span>
                     </div>
-                    <div className='w-full bg-gray-200 rounded-full h-2'>
+                    <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
                       <div
                         className='bg-red-500 h-2 rounded-full'
                         style={{
@@ -271,7 +271,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                         {pokemon.stats.defense}
                       </span>
                     </div>
-                    <div className='w-full bg-gray-200 rounded-full h-2'>
+                    <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2'>
                       <div
                         className='bg-blue-500 h-2 rounded-full'
                         style={{
@@ -287,14 +287,18 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                 <h3 className='text-lg font-semibold mb-2'>Additional Info</h3>
                 <div className='grid grid-cols-2 gap-4 text-sm'>
                   <div>
-                    <span className='text-gray-600'>Generation:</span>
+                    <span className='text-gray-600 dark:text-gray-300'>
+                      Generation:
+                    </span>
                     <span className='ml-2 font-medium'>
                       {pokemon.generation}
                     </span>
                   </div>
                   {pokemon.pokemonClass && (
                     <div>
-                      <span className='text-gray-600'>Class:</span>
+                      <span className='text-gray-600 dark:text-gray-300'>
+                        Class:
+                      </span>
                       <span className='ml-2 font-medium'>
                         {pokemon.pokemonClass.replace('POKEMON_CLASS_', '')}
                       </span>
@@ -312,10 +316,15 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                 <h3 className='text-lg font-semibold mb-4'>Quick Moves</h3>
                 <div className='space-y-2'>
                   {quickMoves.map((move) => (
-                    <div key={move.id} className='bg-gray-50 rounded-lg p-3'>
+                    <div
+                      key={move.id}
+                      className='bg-gray-50 dark:bg-gray-800 rounded-lg p-3'
+                    >
                       <div className='flex justify-between items-start'>
                         <div>
-                          <h4 className='font-medium'>{move.names.English}</h4>
+                          <h4 className='font-medium dark:text-gray-100'>
+                            {move.names.English}
+                          </h4>
                           <span
                             className={`inline-block px-2 py-1 rounded text-xs text-white mt-1 ${getTypeColor(
                               move.type.names.English
@@ -338,10 +347,15 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                 <h3 className='text-lg font-semibold mb-4'>Cinematic Moves</h3>
                 <div className='space-y-2'>
                   {cinematicMoves.map((move) => (
-                    <div key={move.id} className='bg-gray-50 rounded-lg p-3'>
+                    <div
+                      key={move.id}
+                      className='bg-gray-50 dark:bg-gray-800 rounded-lg p-3'
+                    >
                       <div className='flex justify-between items-start'>
                         <div>
-                          <h4 className='font-medium'>{move.names.English}</h4>
+                          <h4 className='font-medium dark:text-gray-100'>
+                            {move.names.English}
+                          </h4>
                           <span
                             className={`inline-block px-2 py-1 rounded text-xs text-white mt-1 ${getTypeColor(
                               move.type.names.English
@@ -372,7 +386,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                     <div key={evo.id} className='flex items-center space-x-4'>
                       <div
                         onClick={() => onPokemonSelect(evo)}
-                        className='flex items-center space-x-3 bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition-colors flex-1'
+                        className='flex items-center space-x-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex-1'
                       >
                         <Image
                           src={getImageUrl(evo)}
@@ -383,7 +397,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                         />
                         <div>
                           <div className='font-medium'>{evo.names.English}</div>
-                          <div className='text-sm text-gray-600'>
+                          <div className='text-sm text-gray-600 dark:text-gray-300'>
                             {formatPokemonNumber(evo.dexNr)}
                           </div>
                         </div>
@@ -398,7 +412,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                             req?.item as unknown
                           );
                           return (
-                            <div className='text-gray-400 flex flex-col items-center min-w-[1.5rem]'>
+                            <div className='text-gray-400 dark:text-gray-500 flex flex-col items-center min-w-[1.5rem]'>
                               <svg
                                 className='w-6 h-6'
                                 fill='none'
@@ -415,7 +429,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                               {req && (
                                 <div className='flex flex-wrap justify-center gap-1 mt-1'>
                                   {Number(req.candies) > 0 && (
-                                    <span className='px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-700 border border-blue-200'>
+                                    <span className='px-2 py-0.5 rounded-full text-xs bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'>
                                       <span aria-hidden='true'>🍬</span>
                                       <span className='sr-only'>
                                         candies:
@@ -424,7 +438,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                                     </span>
                                   )}
                                   {itemName && (
-                                    <span className='px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-700 border border-purple-200'>
+                                    <span className='px-2 py-0.5 rounded-full text-xs bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'>
                                       <span aria-hidden='true'>🪙</span>
                                       <span className='sr-only'>
                                         item:
@@ -435,7 +449,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                                     </span>
                                   )}
                                   {req.quests && req.quests.length > 0 && (
-                                    <span className='px-2 py-0.5 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200'>
+                                    <span className='px-2 py-0.5 rounded-full text-xs bg-amber-50 dark:bg-amber-900 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'>
                                       <span aria-hidden='true'>⭐</span>
                                       <span className='sr-only'>
                                         special quest

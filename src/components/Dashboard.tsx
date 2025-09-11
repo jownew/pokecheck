@@ -69,29 +69,29 @@ const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Stats Cards */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-        <div className='bg-white rounded-xl shadow-lg p-6 text-center'>
-          <div className='text-3xl font-bold text-blue-600 mb-2'>
+        <div className='bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 text-center'>
+          <div className='text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2'>
             {totalPokemon.toLocaleString()}
           </div>
-          <div className='text-gray-600'>Total Pokémon</div>
+          <div className='text-gray-600 dark:text-gray-300'>Total Pokémon</div>
         </div>
-        <div className='bg-white rounded-xl shadow-lg p-6 text-center'>
-          <div className='text-3xl font-bold text-green-600 mb-2'>
+        <div className='bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 text-center'>
+          <div className='text-3xl font-bold text-green-600 dark:text-green-400 mb-2'>
             {uniqueTypes.length}
           </div>
-          <div className='text-gray-600'>Unique Types</div>
+          <div className='text-gray-600 dark:text-gray-300'>Unique Types</div>
         </div>
-        <div className='bg-white rounded-xl shadow-lg p-6 text-center'>
-          <div className='text-3xl font-bold text-purple-600 mb-2'>
+        <div className='bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 text-center'>
+          <div className='text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2'>
             {generations.length}
           </div>
-          <div className='text-gray-600'>Generations</div>
+          <div className='text-gray-600 dark:text-gray-300'>Generations</div>
         </div>
       </div>
 
       {/* Quick Type Filters */}
-      <div className='bg-white rounded-xl shadow-lg p-6'>
-        <h2 className='text-2xl font-bold text-gray-800 mb-6'>
+      <div className='bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6'>
+        <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6'>
           Browse by Type
         </h2>
         <div className='grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4'>
@@ -109,8 +109,8 @@ const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Generation Browser */}
-      <div className='bg-white rounded-xl shadow-lg p-6'>
-        <h2 className='text-2xl font-bold text-gray-800 mb-6'>
+      <div className='bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6'>
+        <h2 className='text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6'>
           Browse by Generation
         </h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -132,17 +132,17 @@ const Dashboard: React.FC<DashboardProps> = ({
               <button
                 key={gen}
                 onClick={() => onGenerationFilter(gen)}
-                className='bg-gradient-to-r from-gray-50 to-gray-100 hover:from-blue-50 hover:to-blue-100 border border-gray-200 hover:border-blue-300 rounded-xl p-4 text-left transition-all duration-200 hover:shadow-lg'
+                className='bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 hover:from-blue-50 hover:to-blue-100 border border-gray-200 dark:border-gray-600 hover:border-blue-300 rounded-xl p-4 text-left transition-all duration-200 hover:shadow-lg'
               >
                 <div className='flex justify-between items-center'>
                   <div>
-                    <div className='font-bold text-lg text-gray-800'>
+                    <div className='font-bold text-lg text-gray-800 dark:text-gray-100'>
                       Generation {gen}
                     </div>
-                    <div className='text-gray-600 text-sm'>
+                    <div className='text-gray-600 dark:text-gray-300 text-sm'>
                       {genNames[gen - 1] || `Gen ${gen}`}
                     </div>
-                    <div className='text-blue-600 font-semibold text-sm mt-1'>
+                    <div className='text-blue-600 dark:text-blue-300 font-semibold text-sm mt-1'>
                       {genPokemon.length} Pokémon
                     </div>
                   </div>
@@ -173,46 +173,52 @@ const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Features Highlight */}
-      <div className='bg-white rounded-xl shadow-lg p-6'>
+      <div className='bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6'>
         <h2 className='text-2xl font-bold text-gray-800 mb-6'>
           Explore Features
         </h2>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
           <div className='text-center'>
-            <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+            <div className='w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4'>
               <span className='text-2xl'>🔍</span>
             </div>
-            <h3 className='font-semibold text-gray-800 mb-2'>Smart Search</h3>
-            <p className='text-gray-600 text-sm'>
+            <h3 className='font-semibold text-gray-800 dark:text-gray-100 mb-2'>
+              Smart Search
+            </h3>
+            <p className='text-gray-600 dark:text-gray-300 text-sm'>
               Search by name, type, or PokéCheck number
             </p>
           </div>
           <div className='text-center'>
-            <div className='w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+            <div className='w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4'>
               <span className='text-2xl'>📊</span>
             </div>
-            <h3 className='font-semibold text-gray-800 mb-2'>Detailed Stats</h3>
-            <p className='text-gray-600 text-sm'>
+            <h3 className='font-semibold text-gray-800 dark:text-gray-100 mb-2'>
+              Detailed Stats
+            </h3>
+            <p className='text-gray-600 dark:text-gray-300 text-sm'>
               View comprehensive stats and moves
             </p>
           </div>
           <div className='text-center'>
-            <div className='w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+            <div className='w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4'>
               <span className='text-2xl'>🔄</span>
             </div>
-            <h3 className='font-semibold text-gray-800 mb-2'>
+            <h3 className='font-semibold text-gray-800 dark:text-gray-100 mb-2'>
               Evolution Chains
             </h3>
-            <p className='text-gray-600 text-sm'>
+            <p className='text-gray-600 dark:text-gray-300 text-sm'>
               Explore evolution paths and requirements
             </p>
           </div>
           <div className='text-center'>
-            <div className='w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+            <div className='w-16 h-16 bg-pink-100 dark:bg-pink-900 rounded-full flex items-center justify-center mx-auto mb-4'>
               <span className='text-2xl'>📱</span>
             </div>
-            <h3 className='font-semibold text-gray-800 mb-2'>PWA Ready</h3>
-            <p className='text-gray-600 text-sm'>
+            <h3 className='font-semibold text-gray-800 dark:text-gray-100 mb-2'>
+              PWA Ready
+            </h3>
+            <p className='text-gray-600 dark:text-gray-300 text-sm'>
               Install as an app for offline access
             </p>
           </div>

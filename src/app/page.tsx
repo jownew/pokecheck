@@ -163,23 +163,23 @@ export default function Home() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50'>
+    <div className='min-h-screen bg-gray-50 dark:bg-gray-950'>
       {/* Header */}
-      <header className='bg-white shadow-sm border-b'>
+      <header className='bg-white dark:bg-gray-950 shadow-sm border-b dark:border-gray-800'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
           <div className='flex items-center justify-between'>
-            <h1 className='text-2xl sm:text-3xl font-bold text-gray-900'>
+            <h1 className='text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100'>
               Pokédex
             </h1>
             <div className='flex items-center gap-3'>
-              <div className='text-sm text-gray-600'>
+              <div className='text-sm text-gray-600 dark:text-gray-300'>
                 {showDashboard
                   ? `${allPokemon.length} Pokémon available`
                   : `${filteredPokemon.length} of ${allPokemon.length} Pokémon`}
               </div>
               <button
                 onClick={confirmResetAndReload}
-                className='text-xs sm:text-sm text-gray-500 hover:text-gray-800 underline'
+                className='text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline'
                 title='Clear caches and reload app'
                 aria-label='Reset app (fresh reload)'
               >
@@ -220,8 +220,10 @@ export default function Home() {
           </div>
         ) : (
           <div className='text-center py-12'>
-            <div className='text-gray-500 text-lg'>No Pokémon found</div>
-            <div className='text-gray-400 text-sm mt-2'>
+            <div className='text-gray-500 dark:text-gray-300 text-lg'>
+              No Pokémon found
+            </div>
+            <div className='text-gray-400 dark:text-gray-400 text-sm mt-2'>
               Try adjusting your search or filters
             </div>
           </div>

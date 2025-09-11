@@ -18,7 +18,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
 }) => {
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center p-4'>
-      <div className='bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center'>
+      <div className='bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-md w-full text-center'>
         {/* Pokéball Icon */}
         <div className='mb-6 flex justify-center'>
           <div className='relative w-24 h-24'>
@@ -37,15 +37,19 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         </div>
 
         {/* Title */}
-        <h1 className='text-3xl font-bold text-gray-800 mb-2'>PokéCheck</h1>
-        <p className='text-gray-600 mb-6'>
+        <h1 className='text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2'>
+          PokéCheck
+        </h1>
+        <p className='text-gray-600 dark:text-gray-300 mb-6'>
           {error ? 'Something went wrong...' : 'Loading Pokémon data...'}
         </p>
 
         {/* Error Message */}
         {error && (
-          <div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-lg'>
-            <p className='text-red-600 text-sm mb-3'>{error}</p>
+          <div className='mb-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-lg'>
+            <p className='text-red-600 dark:text-red-300 text-sm mb-3'>
+              {error}
+            </p>
             <div className='flex gap-2 justify-center'>
               <button
                 onClick={onRetry || resetAppFreshReload}
@@ -68,11 +72,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
         {/* Progress Bar */}
         {!error && (
           <div className='mb-4'>
-            <div className='flex justify-between text-sm text-gray-600 mb-2'>
+            <div className='flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2'>
               <span>Progress</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className='w-full bg-gray-200 rounded-full h-3 overflow-hidden'>
+            <div className='w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden'>
               <div
                 className='h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300 ease-out'
                 style={{ width: `${progress}%` }}
@@ -83,7 +87,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
         {/* Loading Messages */}
         {!error && (
-          <div className='text-sm text-gray-500'>
+          <div className='text-sm text-gray-500 dark:text-gray-400'>
             {progress < 20 && 'Connecting to Pokémon database...'}
             {progress >= 20 && progress < 60 && 'Downloading Pokémon data...'}
             {progress >= 60 &&
@@ -96,9 +100,11 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
         {/* Fun Facts */}
         {!error && progress < 100 && (
-          <div className='mt-6 p-4 bg-blue-50 rounded-lg'>
-            <p className='text-xs text-blue-600 font-medium'>Did you know?</p>
-            <p className='text-xs text-blue-800 mt-1'>
+          <div className='mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg'>
+            <p className='text-xs text-blue-600 dark:text-blue-300 font-medium'>
+              Did you know?
+            </p>
+            <p className='text-xs text-blue-800 dark:text-blue-200 mt-1'>
               {progress < 25 &&
                 'There are over 1000 different Pokémon species!'}
               {progress >= 25 &&

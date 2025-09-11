@@ -34,8 +34,8 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className='min-h-screen bg-gray-50 flex items-center justify-center p-4'>
-          <div className='bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center'>
+        <div className='min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4'>
+          <div className='bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 max-w-md w-full text-center'>
             <div className='mb-6'>
               <div className='w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4'>
                 <svg
@@ -52,19 +52,19 @@ class ErrorBoundary extends Component<Props, State> {
                   />
                 </svg>
               </div>
-              <h2 className='text-xl font-bold text-gray-900 mb-2'>
+              <h2 className='text-xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
                 Oops! Something went wrong
               </h2>
-              <p className='text-gray-600 mb-4'>
+              <p className='text-gray-600 dark:text-gray-300 mb-4'>
                 The app encountered an unexpected error. Don&apos;t worry, your
                 data is safe!
               </p>
               {this.state.error && (
-                <details className='text-left bg-gray-50 rounded-lg p-3 mb-4'>
-                  <summary className='cursor-pointer text-sm font-medium text-gray-700 mb-2'>
+                <details className='text-left bg-gray-50 dark:bg-gray-800 rounded-lg p-3 mb-4'>
+                  <summary className='cursor-pointer text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
                     Error Details
                   </summary>
-                  <code className='text-xs text-red-600 break-all'>
+                  <code className='text-xs text-red-600 dark:text-red-400 break-all'>
                     {this.state.error.message}
                   </code>
                 </details>
@@ -82,7 +82,7 @@ class ErrorBoundary extends Component<Props, State> {
                 onClick={() =>
                   this.setState({ hasError: false, error: undefined })
                 }
-                className='w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors'
+                className='w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
               >
                 Try Again
               </button>

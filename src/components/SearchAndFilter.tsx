@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Pokemon } from '@/types/pokemon';
 import { getUniqueTypes, getUniqueGenerations } from '@/utils/pokemonData';
 
@@ -25,6 +25,11 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     null
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+  // Use ref to store the latest onSearch function to avoid dependency issues
+  const onSearchRef = useRef(onSearch);
+  onSearchRef.current = onSearch;
 
   const uniqueTypes = getUniqueTypes(pokemonList);
   const uniqueGenerations = getUniqueGenerations(pokemonList);
@@ -32,15 +37,24 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   // Debounce search functionality
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      onSearch(searchTerm);
+      setDebouncedSearchTerm(searchTerm);
     }, 300); // 300ms delay
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm, onSearch]);
+  }, [searchTerm]);
+
+  // Trigger search when debounced search term changes
+  useEffect(() => {
+    onSearchRef.current(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
   // Handle search input changes
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
+    // If clearing the search, clear debounced term immediately
+    if (value === '') {
+      setDebouncedSearchTerm('');
+    }
   };
 
   // Handle type filter changes
@@ -58,6 +72,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   // Clear all filters
   const handleClearFilters = () => {
     setSearchTerm('');
+    setDebouncedSearchTerm(''); // Clear debounced term immediately
     setSelectedType('all');
     setSelectedGeneration(null);
     onClearFilters();

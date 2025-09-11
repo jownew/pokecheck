@@ -1,0 +1,29 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#3b82f6"/>
+  
+  <!-- Content -->
+  <text x="600" y="200" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="white" text-anchor="middle">
+    Pokédex
+  </text>
+  
+  <text x="600" y="280" font-family="Arial, sans-serif" font-size="40" fill="#e0e7ff" text-anchor="middle">
+    Explore Pokémon
+  </text>
+  
+  <text x="600" y="350" font-family="Arial, sans-serif" font-size="24" fill="#cbd5e1" text-anchor="middle">
+    A comprehensive mobile-responsive Pokédex app
+  </text>
+  
+  <text x="600" y="380" font-family="Arial, sans-serif" font-size="24" fill="#cbd5e1" text-anchor="middle">
+    to search and explore Pokémon with detailed information
+  </text>
+  
+  <text x="600" y="450" font-family="Arial, sans-serif" font-size="20" fill="#fbbf24" text-anchor="middle">
+    ✨ Smart Search • 📱 PWA • 🎮 Detailed Info
+  </text>
+  
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="18" fill="#e2e8f0" text-anchor="middle">
+    Built with Next.js 15 • React 19 • TypeScript
+  </text>
+</svg>

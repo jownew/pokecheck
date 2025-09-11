@@ -1,0 +1,110 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#1d4ed8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Pokéball pattern -->
+    <pattern id="pokeball" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+      <line x1="10" y1="50" x2="90" y2="50" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+      <circle cx="50" cy="50" r="8" fill="rgba(255,255,255,0.3)"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Pattern overlay -->
+  <rect width="1200" height="630" fill="url(#pokeball)" opacity="0.3"/>
+  
+  <!-- Main content container -->
+  <g transform="translate(100, 100)">
+    
+    <!-- App icon/logo area -->
+    <g transform="translate(0, 50)">
+      <!-- Pokéball icon -->
+      <circle cx="80" cy="80" r="60" fill="#ffffff" stroke="#e5e7eb" stroke-width="4"/>
+      <path d="M 20 80 L 140 80" stroke="#e5e7eb" stroke-width="4"/>
+      <circle cx="80" cy="80" r="15" fill="#ef4444"/>
+      <circle cx="80" cy="80" r="8" fill="#ffffff"/>
+      
+      <!-- Sparkle effects -->
+      <g fill="#fbbf24" opacity="0.8">
+        <polygon points="150,40 155,50 165,50 157,58 160,68 150,62 140,68 143,58 135,50 145,50" />
+        <polygon points="30,120 33,126 39,126 34,130 36,136 30,132 24,136 26,130 21,126 27,126" />
+        <polygon points="160,120 163,126 169,126 164,130 166,136 160,132 154,136 156,130 151,126 157,126" />
+      </g>
+    </g>
+    
+    <!-- Text content -->
+    <g transform="translate(200, 0)">
+      <!-- Main title -->
+      <text x="0" y="80" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff">
+        Pokédex
+      </text>
+      
+      <!-- Subtitle -->
+      <text x="0" y="130" font-family="Arial, sans-serif" font-size="36" fill="#e0e7ff">
+        Explore Pokémon
+      </text>
+      
+      <!-- Description -->
+      <text x="0" y="180" font-family="Arial, sans-serif" font-size="24" fill="#cbd5e1">
+        A comprehensive mobile-responsive Pokédex app
+      </text>
+      <text x="0" y="210" font-family="Arial, sans-serif" font-size="24" fill="#cbd5e1">
+        to search and explore Pokémon with detailed
+      </text>
+      <text x="0" y="240" font-family="Arial, sans-serif" font-size="24" fill="#cbd5e1">
+        information, stats, moves, and evolution chains.
+      </text>
+      
+      <!-- Features -->
+      <g transform="translate(0, 280)">
+        <text x="0" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="#fbbf24">
+          ✨ Smart Search & Filtering
+        </text>
+        <text x="0" y="60" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="#34d399">
+          📱 Progressive Web App
+        </text>
+        <text x="0" y="90" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="#f472b6">
+          🎮 Detailed Pokémon Info
+        </text>
+      </g>
+    </g>
+    
+    <!-- Tech stack badges -->
+    <g transform="translate(750, 350)">
+      <!-- Next.js badge -->
+      <rect x="0" y="0" width="120" height="35" rx="17" fill="#000000"/>
+      <text x="60" y="23" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">
+        Next.js 15
+      </text>
+      
+      <!-- React badge -->
+      <rect x="0" y="45" width="100" height="35" rx="17" fill="#61dafb"/>
+      <text x="50" y="68" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="#000000" text-anchor="middle">
+        React 19
+      </text>
+      
+      <!-- TypeScript badge -->
+      <rect x="0" y="90" width="120" height="35" rx="17" fill="#3178c6"/>
+      <text x="60" y="113" font-family="Arial, sans-serif" font-size="14" font-weight="600" fill="#ffffff" text-anchor="middle">
+        TypeScript
+      </text>
+    </g>
+    
+  </g>
+  
+  <!-- Bottom decoration -->
+  <g transform="translate(0, 550)">
+    <rect width="1200" height="80" fill="rgba(0,0,0,0.2)"/>
+    <text x="600" y="50" font-family="Arial, sans-serif" font-size="18" fill="#e2e8f0" text-anchor="middle">
+      Built with ❤️ using Next.js and TypeScript
+    </text>
+  </g>
+</svg>

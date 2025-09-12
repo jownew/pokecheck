@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Pokemon, Move, Evolution } from '@/types/pokemon';
+import { Pokemon, Move, Evolution, EvolutionChainNode } from '@/types/pokemon';
 import { typeColors } from './PokemonCard';
-import { getPreEvolutions, getEvolutions } from '@/utils/evolutionChain';
+import { buildEvolutionChain } from '@/utils/evolutionChain';
 
 interface PokemonDetailProps {
   pokemon: Pokemon;
@@ -43,34 +43,6 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
   // Get type color class
   const getTypeColor = (typeName: string) => {
     return typeColors[typeName] || 'bg-gray-400';
-  };
-
-  // Get evolution chain including previous and next stages
-  const getEvolutionChain = () => {
-    const chain: Pokemon[] = [];
-
-    // Walk backwards to base form (choose the first path when multiple exist)
-    let current: Pokemon = pokemon;
-    const visited = new Set<string>();
-    while (true) {
-      const preEvos = getPreEvolutions(current, allPokemon);
-      if (!preEvos || preEvos.length === 0) break;
-      const prev = preEvos[0];
-      if (visited.has(prev.id)) break;
-      chain.unshift(prev);
-      visited.add(prev.id);
-      current = prev;
-    }
-
-    // Add current
-    chain.push(pokemon);
-
-    // Add next evolutions (direct only)
-    const nextEvos = getEvolutions(pokemon, allPokemon);
-
-    nextEvos.forEach((mon) => chain.push(mon));
-
-    return chain;
   };
 
   // Convert moves object to array
@@ -122,8 +94,75 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
     const evo = from.evolutions?.find((e) => e.id === to.id);
     return evo || null;
   };
+  function EvolutionBranch({ node }: { node: EvolutionChainNode }) {
+    return (
+      <div className='flex flex-col items-center'>
+        <div
+          onClick={() => onPokemonSelect(node.pokemon)}
+          className='flex items-center space-x-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors'
+        >
+          <Image
+            src={getImageUrl(node.pokemon)}
+            alt={node.pokemon.names.English}
+            width={48}
+            height={48}
+            className='object-contain'
+          />
+          <div>
+            <div className='font-medium'>{node.pokemon.names.English}</div>
+            <div className='text-sm text-gray-600 dark:text-gray-300'>
+              {formatPokemonNumber(node.pokemon.dexNr)}
+            </div>
+          </div>
+        </div>
 
-  const evolutionChain = getEvolutionChain();
+        {node.evolvesTo && node.evolvesTo.length > 0 && (
+          <div className='mt-3 flex flex-col items-center'>
+            <div className='h-4 w-0.5 bg-gray-300 dark:bg-gray-700'></div>
+            <div className='mt-3 flex flex-wrap justify-center gap-6'>
+              {node.evolvesTo.map((child) => {
+                const req = getEvolutionRequirementBetween(
+                  node.pokemon,
+                  child.pokemon
+                );
+                const itemName = normalizeItemName(req?.item as unknown);
+                return (
+                  <div
+                    key={child.pokemon.id}
+                    className='flex flex-col items-center'
+                  >
+                    {req && (
+                      <div className='mb-2 flex flex-wrap justify-center gap-1 text-xs'>
+                        {Number(req.candies) > 0 && (
+                          <span className='px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'>
+                            <span aria-hidden='true'>🍬</span>{' '}
+                            {Number(req.candies)} candies
+                          </span>
+                        )}
+                        {itemName && (
+                          <span className='px-2 py-0.5 rounded-full bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'>
+                            <span aria-hidden='true'>🪙</span> {itemName}
+                          </span>
+                        )}
+                        {req.quests && req.quests.length > 0 && (
+                          <span className='px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'>
+                            <span aria-hidden='true'>⭐</span> special quest
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <EvolutionBranch node={child} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  const evolutionForest = buildEvolutionChain(pokemon, allPokemon);
   const quickMoves = getMovesArray(pokemon.quickMoves);
   const cinematicMoves = getMovesArray(pokemon.cinematicMoves);
 
@@ -382,87 +421,12 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
           {/* Evolution Tab */}
           {activeTab === 'evolution' && (
             <div>
-              <h3 className='text-lg font-semibold mb-4'>Evolution Chain</h3>
-              {evolutionChain.length > 1 ? (
-                <div className='space-y-4'>
-                  {evolutionChain.map((evo, index) => (
-                    <div key={evo.id} className='flex items-center space-x-4'>
-                      <div
-                        onClick={() => onPokemonSelect(evo)}
-                        className='flex items-center space-x-3 bg-gray-50 dark:bg-gray-800 rounded-lg p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex-1'
-                      >
-                        <Image
-                          src={getImageUrl(evo)}
-                          alt={evo.names.English}
-                          width={48}
-                          height={48}
-                          className='object-contain'
-                        />
-                        <div>
-                          <div className='font-medium'>{evo.names.English}</div>
-                          <div className='text-sm text-gray-600 dark:text-gray-300'>
-                            {formatPokemonNumber(evo.dexNr)}
-                          </div>
-                        </div>
-                      </div>
-                      {index < evolutionChain.length - 1 &&
-                        (() => {
-                          const req = getEvolutionRequirementBetween(
-                            evolutionChain[index],
-                            evolutionChain[index + 1]
-                          );
-                          const itemName = normalizeItemName(
-                            req?.item as unknown
-                          );
-                          return (
-                            <div className='text-gray-400 dark:text-gray-500 flex flex-col items-center min-w-[1.5rem]'>
-                              <svg
-                                className='w-6 h-6'
-                                fill='none'
-                                stroke='currentColor'
-                                viewBox='0 0 24 24'
-                              >
-                                <path
-                                  strokeLinecap='round'
-                                  strokeLinejoin='round'
-                                  strokeWidth={2}
-                                  d='M9 5l7 7-7 7'
-                                />
-                              </svg>
-                              {req && (
-                                <div className='flex flex-wrap justify-center gap-1 mt-1'>
-                                  {Number(req.candies) > 0 && (
-                                    <span className='px-2 py-0.5 rounded-full text-xs bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'>
-                                      <span aria-hidden='true'>🍬</span>
-                                      <span className='sr-only'>
-                                        candies:
-                                      </span>{' '}
-                                      {Number(req.candies)} candies
-                                    </span>
-                                  )}
-                                  {itemName && (
-                                    <span className='px-2 py-0.5 rounded-full text-xs bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'>
-                                      <span aria-hidden='true'>🪙</span>
-                                      <span className='sr-only'>
-                                        item:
-                                      </span>{' '}
-                                      {itemName}
-                                    </span>
-                                  )}
-                                  {req.quests && req.quests.length > 0 && (
-                                    <span className='px-2 py-0.5 rounded-full text-xs bg-amber-50 dark:bg-amber-900 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'>
-                                      <span aria-hidden='true'>⭐</span>
-                                      <span className='sr-only'>
-                                        special quest
-                                      </span>{' '}
-                                      special quest
-                                    </span>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })()}
+              <h3 className='text-lg font-semibold mb-4'>Evolution Tree</h3>
+              {evolutionForest.length > 0 ? (
+                <div className='space-y-8'>
+                  {evolutionForest.map((root) => (
+                    <div key={root.pokemon.id} className='flex justify-center'>
+                      <EvolutionBranch node={root} />
                     </div>
                   ))}
                 </div>

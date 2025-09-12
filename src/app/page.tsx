@@ -228,17 +228,21 @@ export default function Home() {
     <div className='min-h-screen bg-gray-50 dark:bg-gray-950'>
       {/* Header */}
       <header className='bg-white dark:bg-gray-950 shadow-sm border-b dark:border-gray-800'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3'>
           <div className='flex items-center justify-between'>
-            <h1 className='text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100'>
-              Pokédex
-            </h1>
-            <div className='flex items-center gap-3'>
-              <div className='text-sm text-gray-600 dark:text-gray-300'>
+            <div>
+              <a href='https://pokecheck-seven.vercel.app'>
+                <h1 className='text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100'>
+                  PokéCheck
+                </h1>
+              </a>
+              <div className='text-sm text-gray-600 dark:text-gray-300 flex-auto'>
                 {showDashboard
                   ? `${allPokemon.length} Pokémon available`
                   : `${filteredPokemon.length} of ${allPokemon.length} Pokémon`}
               </div>
+            </div>
+            <div className='flex items-center gap-3'>
               <button
                 onClick={cycleTheme}
                 className='text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline'

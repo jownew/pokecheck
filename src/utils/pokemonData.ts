@@ -1,7 +1,7 @@
 import { Pokemon, PokemonApiResponse } from '@/types/pokemon';
 
 const POKEMON_API_URL =
-  'https://pokemon-go-api.github.io/pokemon-go-api/api/pokedex1.json';
+  'https://pokemon-go-api.github.io/pokemon-go-api/api/pokedex.json';
 const STORAGE_KEY = 'pokemon_data';
 const STORAGE_TIMESTAMP_KEY = 'pokemon_data_timestamp';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds

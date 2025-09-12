@@ -101,6 +101,12 @@ export default function RootLayout({
         <meta name='apple-mobile-web-app-status-bar-style' content='default' />
         <meta name='apple-mobile-web-app-title' content='PokéCheck' />
         <link rel='apple-touch-icon' href='/favicon.ico' />
+        {/* Apply saved theme early to avoid flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => { try { const stored = localStorage.getItem('theme'); const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; const theme = stored || 'system'; const root = document.documentElement; const isDark = theme === 'dark' || (theme === 'system' && prefersDark); root.classList.toggle('dark', isDark); root.style.colorScheme = isDark ? 'dark' : 'light'; } catch (e) {} })();`,
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

@@ -25,6 +25,68 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [showDashboard, setShowDashboard] = useState(true);
 
+  // Theme preference (system | light | dark)
+  const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('theme') as
+        | 'system'
+        | 'light'
+        | 'dark'
+        | null;
+      if (stored === 'light' || stored === 'dark' || stored === 'system') {
+        setTheme(stored);
+      }
+    } catch {}
+  }, []);
+
+  const applyTheme = (next: 'system' | 'light' | 'dark') => {
+    setTheme(next);
+    try {
+      localStorage.setItem('theme', next);
+      const prefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      ).matches;
+      const isDark = next === 'dark' || (next === 'system' && prefersDark);
+      document.documentElement.classList.toggle('dark', isDark);
+      // Also hint to the UA for built-ins
+      document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+    } catch {}
+  };
+
+  const cycleTheme = () => {
+    const next =
+      theme === 'system' ? 'light' : theme === 'light' ? 'dark' : 'system';
+    applyTheme(next);
+  };
+
+  // Keep "system" theme reactive to OS changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        const isDark = e.matches;
+        document.documentElement.classList.toggle('dark', isDark);
+        document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+      }
+    };
+    try {
+      mql.addEventListener('change', handler);
+    } catch {
+      // Safari < 14
+      mql.addListener(handler);
+    }
+    return () => {
+      try {
+        mql.removeEventListener('change', handler);
+      } catch {
+        mql.removeListener(handler);
+      }
+    };
+  }, [theme]);
+
   // Load Pokémon data on component mount
   useEffect(() => {
     const loadData = async () => {
@@ -177,6 +239,19 @@ export default function Home() {
                   ? `${allPokemon.length} Pokémon available`
                   : `${filteredPokemon.length} of ${allPokemon.length} Pokémon`}
               </div>
+              <button
+                onClick={cycleTheme}
+                className='text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline'
+                title='Toggle theme (system → light → dark)'
+                aria-label='Toggle theme'
+              >
+                {theme === 'dark'
+                  ? '🌙 Dark'
+                  : theme === 'light'
+                  ? '☀️ Light'
+                  : '🖥️ System'}
+              </button>
+
               <button
                 onClick={confirmResetAndReload}
                 className='text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 underline'

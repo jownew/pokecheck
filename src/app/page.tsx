@@ -15,6 +15,7 @@ import SearchAndFilter from '@/components/SearchAndFilter';
 import PokemonCard from '@/components/PokemonCard';
 import PokemonDetail from '@/components/PokemonDetail';
 import Dashboard from '@/components/Dashboard';
+import Pagination from '@/components/Pagination';
 
 export default function Home() {
   const [allPokemon, setAllPokemon] = useState<Pokemon[]>([]);
@@ -27,6 +28,14 @@ export default function Home() {
 
   // Theme preference (system | light | dark)
   const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 24;
+
+  // Scroll to top on page change
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   useEffect(() => {
     try {
@@ -132,9 +141,11 @@ export default function Home() {
       const filtered = searchPokemon(allPokemon, searchTerm);
       setFilteredPokemon(filtered);
       setShowDashboard(false);
+      setCurrentPage(1);
     } else {
       setFilteredPokemon([]);
       setShowDashboard(true);
+      setCurrentPage(1);
     }
   };
 
@@ -144,9 +155,11 @@ export default function Home() {
       const filtered = filterByType(allPokemon, type);
       setFilteredPokemon(filtered);
       setShowDashboard(false);
+      setCurrentPage(1);
     } else {
       setFilteredPokemon([]);
       setShowDashboard(true);
+      setCurrentPage(1);
     }
   };
 
@@ -156,9 +169,11 @@ export default function Home() {
       const filtered = filterByGeneration(allPokemon, generation);
       setFilteredPokemon(filtered);
       setShowDashboard(false);
+      setCurrentPage(1);
     } else {
       setFilteredPokemon([]);
       setShowDashboard(true);
+      setCurrentPage(1);
     }
   };
 
@@ -166,6 +181,7 @@ export default function Home() {
   const handleClearFilters = () => {
     setFilteredPokemon([]);
     setShowDashboard(true);
+    setCurrentPage(1);
   };
 
   // Handle quick filter from dashboard
@@ -173,6 +189,7 @@ export default function Home() {
     const filtered = filterByType(allPokemon, type);
     setFilteredPokemon(filtered);
     setShowDashboard(false);
+    setCurrentPage(1);
   };
 
   // Handle generation filter from dashboard
@@ -180,6 +197,7 @@ export default function Home() {
     const filtered = filterByGeneration(allPokemon, generation);
     setFilteredPokemon(filtered);
     setShowDashboard(false);
+    setCurrentPage(1);
   };
 
   // Handle Pokémon card click
@@ -223,6 +241,9 @@ export default function Home() {
       />
     );
   }
+  const totalPages = Math.max(1, Math.ceil(filteredPokemon.length / PAGE_SIZE));
+  const startIdx = (currentPage - 1) * PAGE_SIZE;
+  const visiblePokemon = filteredPokemon.slice(startIdx, startIdx + PAGE_SIZE);
 
   return (
     <div className='min-h-screen bg-gray-50 dark:bg-gray-950'>
@@ -288,15 +309,24 @@ export default function Home() {
             onGenerationFilter={handleDashboardGenerationFilter}
           />
         ) : filteredPokemon.length > 0 ? (
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6'>
-            {filteredPokemon.map((pokemon) => (
-              <PokemonCard
-                key={pokemon.id}
-                pokemon={pokemon}
-                onClick={handlePokemonClick}
+          <>
+            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6'>
+              {visiblePokemon.map((pokemon) => (
+                <PokemonCard
+                  key={pokemon.id}
+                  pokemon={pokemon}
+                  onClick={handlePokemonClick}
+                />
+              ))}
+            </div>
+            <div className='mt-6 flex justify-center'>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
               />
-            ))}
-          </div>
+            </div>
+          </>
         ) : (
           <div className='text-center py-12'>
             <div className='text-gray-500 dark:text-gray-300 text-lg'>

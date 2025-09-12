@@ -104,7 +104,10 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
           ? (obj['English'] as string)
           : undefined;
       const candidate = id ?? name ?? namesEnglish ?? NamesEnglish ?? english;
-      return candidate ?? null;
+      return (
+        candidate?.toLowerCase().replace(/item_/g, '').replace(/_/g, ' ') ??
+        null
+      );
     }
     return null;
   };
@@ -443,9 +446,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                                       <span className='sr-only'>
                                         item:
                                       </span>{' '}
-                                      {itemName
-                                        .replace(/_/g, ' ')
-                                        .toLowerCase()}
+                                      {itemName}
                                     </span>
                                   )}
                                   {req.quests && req.quests.length > 0 && (

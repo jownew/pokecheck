@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PokéCheck icon">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <circle cx="128" cy="128" r="112" fill="#fff" stroke="#111827" stroke-width="16"/>
+  <path d="M16 128h224" stroke="#111827" stroke-width="16"/>
+  <path d="M128 16a112 112 0 0 1 112 112H16A112 112 0 0 1 128 16z" fill="url(#g)"/>
+  <circle cx="128" cy="128" r="40" fill="#fff" stroke="#111827" stroke-width="14"/>
+  <path d="M100 142l18 18 40-48" fill="none" stroke="#22c55e" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+

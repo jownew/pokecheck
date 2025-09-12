@@ -1,6 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+
 import { Pokemon } from '@/types/pokemon';
 import {
   getPokemonData,
@@ -252,11 +255,19 @@ export default function Home() {
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3'>
           <div className='flex items-center justify-between'>
             <div>
-              <a href='https://pokecheck-seven.vercel.app'>
+              <Link href='/' className='flex items-center gap-2'>
+                <Image
+                  src='/pokecheck-logo.svg'
+                  alt='PokéCheck logo'
+                  width={32}
+                  height={32}
+                  className='h-8 w-8'
+                  priority
+                />
                 <h1 className='text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100'>
                   PokéCheck
                 </h1>
-              </a>
+              </Link>
               <div className='text-sm text-gray-600 dark:text-gray-300 flex-auto'>
                 {showDashboard
                   ? `${allPokemon.length} Pokémon available`

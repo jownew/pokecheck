@@ -22,6 +22,12 @@ export const metadata: Metadata = {
   authors: [{ name: 'PokéCheck App' }],
   manifest: '/manifest.json',
 
+  icons: {
+    icon: [{ url: '/pokecheck-favicon.svg', type: 'image/svg+xml' }],
+    shortcut: ['/pokecheck-favicon.svg'],
+    apple: ['/pokecheck-favicon.svg'],
+  },
+
   // Open Graph metadata for social sharing
   openGraph: {
     title: 'PokéCheck - Explore Pokémon',
@@ -96,11 +102,14 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
+        <link rel='icon' href='/favicon.ico' sizes='any' />
+
         <link rel='manifest' href='/manifest.json' />
         <meta name='apple-mobile-web-app-capable' content='yes' />
         <meta name='apple-mobile-web-app-status-bar-style' content='default' />
         <meta name='apple-mobile-web-app-title' content='PokéCheck' />
-        <link rel='apple-touch-icon' href='/favicon.ico' />
+        <link rel='icon' type='image/svg+xml' href='/pokecheck-favicon.svg' />
+        <link rel='apple-touch-icon' href='/pokecheck-favicon.svg' />
         {/* Apply saved theme early to avoid flash */}
         <script
           dangerouslySetInnerHTML={{

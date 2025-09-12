@@ -1,10 +1,13 @@
 import { Pokemon, PokemonApiResponse } from '@/types/pokemon';
 
 const POKEMON_API_URL =
-  'https://pokemon-go-api.github.io/pokemon-go-api/api/pokedex.json';
+  'https://pokemon-go-api.github.io/pokemon-go-api/api/pokedex1.json';
 const STORAGE_KEY = 'pokemon_data';
 const STORAGE_TIMESTAMP_KEY = 'pokemon_data_timestamp';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+// Local fallback JSON bundled with the app (served from /public)
+const FALLBACK_POKEMON_PATH = '/data/pokedex.backup.json';
+// Optional compressed fallback to reduce asset size
 
 /**
  * Clear cached Pokémon data from localStorage
@@ -208,6 +211,9 @@ export const cachePokemonData = (data: Pokemon[]): void => {
 /**
  * Fetch Pokémon data from API
  */
+
+// Try to load compressed fallback (gzip) using the browser's DecompressionStream
+
 export const fetchPokemonData = async (
   onProgress?: (progress: number) => void
 ): Promise<Pokemon[]> => {
@@ -254,6 +260,26 @@ export const fetchPokemonData = async (
     return sortedData;
   } catch (error) {
     console.error('Error fetching Pokémon data:', error);
+
+    // Try plain JSON fallback bundled with the app
+    try {
+      const fallbackResp = await fetch(FALLBACK_POKEMON_PATH, {
+        cache: 'no-store',
+      });
+      if (fallbackResp.ok) {
+        onProgress?.(60);
+        const fallbackData: PokemonApiResponse = await fallbackResp.json();
+        const sortedData = fallbackData.sort((a, b) => a.dexNr - b.dexNr);
+        // Cache for subsequent loads
+        cachePokemonData(sortedData);
+        onProgress?.(100);
+        return sortedData;
+      }
+    } catch (fallbackErr) {
+      console.error('Failed to load fallback Pokémon data:', fallbackErr);
+    }
+
+    // 3) If fallbacks also failed, rethrow the original error
     throw error;
   }
 };

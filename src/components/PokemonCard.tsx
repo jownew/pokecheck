@@ -181,14 +181,35 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
           </div>
         </div>
 
-        {/* Evolution indicator */}
-        {pokemon.evolutions.length > 0 && (
-          <div className='mt-3 flex items-center justify-center'>
-            <span className='text-xs text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded-full'>
-              Can evolve
-            </span>
-          </div>
-        )}
+        {/* Evolution and Forms indicators */}
+        <div className='mt-3 space-y-2'>
+          {pokemon.evolutions.length > 0 && (
+            <div className='flex items-center justify-center'>
+              <span className='text-xs text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900 px-2 py-1 rounded-full'>
+                Can evolve
+              </span>
+            </div>
+          )}
+
+          {pokemon.hasMegaEvolution &&
+            pokemon.megaEvolutions &&
+            Object.keys(pokemon.megaEvolutions).length > 0 && (
+              <div className='flex items-center justify-center'>
+                <span className='text-xs text-purple-600 dark:text-purple-300 bg-purple-50 dark:bg-purple-900 px-2 py-1 rounded-full'>
+                  ⚡ Mega Evolution
+                </span>
+              </div>
+            )}
+
+          {pokemon.regionForms &&
+            Object.keys(pokemon.regionForms).length > 0 && (
+              <div className='flex items-center justify-center'>
+                <span className='text-xs text-cyan-600 dark:text-cyan-300 bg-cyan-50 dark:bg-cyan-900 px-2 py-1 rounded-full'>
+                  🌍 Regional Forms
+                </span>
+              </div>
+            )}
+        </div>
       </div>
     </div>
   );

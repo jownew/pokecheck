@@ -19,9 +19,9 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
   onClose,
   onPokemonSelect,
 }) => {
-  const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'evolution'>(
-    'stats'
-  );
+  const [activeTab, setActiveTab] = useState<
+    'stats' | 'moves' | 'evolution' | 'forms'
+  >('stats');
   const [imageError, setImageError] = useState(false);
 
   // Get the primary image URL
@@ -241,11 +241,14 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
             { id: 'stats', label: 'Stats' },
             { id: 'moves', label: 'Moves' },
             { id: 'evolution', label: 'Evolution' },
+            { id: 'forms', label: 'Forms' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() =>
-                setActiveTab(tab.id as 'stats' | 'moves' | 'evolution')
+                setActiveTab(
+                  tab.id as 'stats' | 'moves' | 'evolution' | 'forms'
+                )
               }
               className={`flex-1 py-3 px-4 text-center font-medium transition-colors ${
                 activeTab === tab.id
@@ -347,6 +350,25 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                     </div>
                   )}
                 </div>
+
+                {/* Forms Indicators */}
+                <div className='mt-4 flex flex-wrap gap-2'>
+                  {pokemon.hasMegaEvolution &&
+                    pokemon.megaEvolutions &&
+                    Object.keys(pokemon.megaEvolutions).length > 0 && (
+                      <span className='inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'>
+                        <span className='mr-1'>⚡</span>
+                        Mega Evolution Available
+                      </span>
+                    )}
+                  {pokemon.regionForms &&
+                    Object.keys(pokemon.regionForms).length > 0 && (
+                      <span className='inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'>
+                        <span className='mr-1'>🌍</span>
+                        Regional Forms Available
+                      </span>
+                    )}
+                </div>
               </div>
             </div>
           )}
@@ -433,6 +455,187 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
               ) : (
                 <p className='text-gray-600'>This Pokémon does not evolve.</p>
               )}
+            </div>
+          )}
+
+          {/* Forms Tab */}
+          {activeTab === 'forms' && (
+            <div className='space-y-6'>
+              {/* Mega Evolutions */}
+              {pokemon.hasMegaEvolution &&
+                pokemon.megaEvolutions &&
+                Object.keys(pokemon.megaEvolutions).length > 0 && (
+                  <div>
+                    <h3 className='text-lg font-semibold mb-4'>
+                      Mega Evolutions
+                    </h3>
+                    <div className='space-y-4'>
+                      {Object.entries(pokemon.megaEvolutions).map(
+                        ([key, megaForm]) => (
+                          <div
+                            key={key}
+                            className='bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-lg p-4 border border-purple-200 dark:border-purple-700'
+                          >
+                            <div className='flex items-center space-x-4'>
+                              {megaForm.assets?.image && (
+                                <Image
+                                  src={megaForm.assets.image}
+                                  alt={megaForm.names.English}
+                                  width={64}
+                                  height={64}
+                                  className='object-contain'
+                                />
+                              )}
+                              <div className='flex-1'>
+                                <h4 className='text-lg font-bold text-purple-800 dark:text-purple-200'>
+                                  {megaForm.names.English}
+                                </h4>
+                                <div className='flex gap-2 mt-2'>
+                                  <span
+                                    className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
+                                      megaForm.primaryType.names.English
+                                    )}`}
+                                  >
+                                    {megaForm.primaryType.names.English}
+                                  </span>
+                                  {megaForm.secondaryType && (
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
+                                        megaForm.secondaryType.names.English
+                                      )}`}
+                                    >
+                                      {megaForm.secondaryType.names.English}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className='grid grid-cols-3 gap-4 mt-3 text-sm'>
+                                  <div className='text-center'>
+                                    <div className='text-gray-600 dark:text-gray-300'>
+                                      HP
+                                    </div>
+                                    <div className='font-bold text-green-600'>
+                                      {megaForm.stats.stamina}
+                                    </div>
+                                  </div>
+                                  <div className='text-center'>
+                                    <div className='text-gray-600 dark:text-gray-300'>
+                                      Attack
+                                    </div>
+                                    <div className='font-bold text-red-600'>
+                                      {megaForm.stats.attack}
+                                    </div>
+                                  </div>
+                                  <div className='text-center'>
+                                    <div className='text-gray-600 dark:text-gray-300'>
+                                      Defense
+                                    </div>
+                                    <div className='font-bold text-blue-600'>
+                                      {megaForm.stats.defense}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              {/* Regional Forms */}
+              {pokemon.regionForms &&
+                Object.keys(pokemon.regionForms).length > 0 && (
+                  <div>
+                    <h3 className='text-lg font-semibold mb-4'>
+                      Regional Forms
+                    </h3>
+                    <div className='space-y-4'>
+                      {Object.entries(pokemon.regionForms).map(
+                        ([key, regionForm]) => (
+                          <div
+                            key={key}
+                            className='bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900 dark:to-cyan-900 rounded-lg p-4 border border-blue-200 dark:border-blue-700'
+                          >
+                            <div className='flex items-center space-x-4'>
+                              {regionForm.assets?.image && (
+                                <Image
+                                  src={regionForm.assets.image}
+                                  alt={regionForm.names.English}
+                                  width={64}
+                                  height={64}
+                                  className='object-contain'
+                                />
+                              )}
+                              <div className='flex-1'>
+                                <h4 className='text-lg font-bold text-blue-800 dark:text-blue-200'>
+                                  {regionForm.names.English}
+                                </h4>
+                                <div className='flex gap-2 mt-2'>
+                                  <span
+                                    className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
+                                      regionForm.primaryType.names.English
+                                    )}`}
+                                  >
+                                    {regionForm.primaryType.names.English}
+                                  </span>
+                                  {regionForm.secondaryType && (
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
+                                        regionForm.secondaryType.names.English
+                                      )}`}
+                                    >
+                                      {regionForm.secondaryType.names.English}
+                                    </span>
+                                  )}
+                                </div>
+                                <div className='grid grid-cols-3 gap-4 mt-3 text-sm'>
+                                  <div className='text-center'>
+                                    <div className='text-gray-600 dark:text-gray-300'>
+                                      HP
+                                    </div>
+                                    <div className='font-bold text-green-600'>
+                                      {regionForm.stats.stamina}
+                                    </div>
+                                  </div>
+                                  <div className='text-center'>
+                                    <div className='text-gray-600 dark:text-gray-300'>
+                                      Attack
+                                    </div>
+                                    <div className='font-bold text-red-600'>
+                                      {regionForm.stats.attack}
+                                    </div>
+                                  </div>
+                                  <div className='text-center'>
+                                    <div className='text-gray-600 dark:text-gray-300'>
+                                      Defense
+                                    </div>
+                                    <div className='font-bold text-blue-600'>
+                                      {regionForm.stats.defense}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              {/* No Forms Available */}
+              {(!pokemon.hasMegaEvolution ||
+                !pokemon.megaEvolutions ||
+                Object.keys(pokemon.megaEvolutions).length === 0) &&
+                (!pokemon.regionForms ||
+                  Object.keys(pokemon.regionForms).length === 0) && (
+                  <div className='text-center py-8'>
+                    <div className='text-gray-500 dark:text-gray-400 text-lg'>
+                      No alternative forms available for this Pokémon.
+                    </div>
+                  </div>
+                )}
             </div>
           )}
         </div>

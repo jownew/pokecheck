@@ -1,10 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Pokemon, Move, Evolution, EvolutionChainNode } from '@/types/pokemon';
 import { typeColors } from './PokemonCard';
 import { buildEvolutionChain } from '@/utils/evolutionChain';
+import {
+  loadTypeChart,
+  computeWeaknesses,
+  computeResistances,
+  computeImmunities,
+  computeOffenseStrengths,
+} from '@/utils/typeEffectiveness';
 
 interface PokemonDetailProps {
   pokemon: Pokemon;
@@ -23,6 +30,56 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
     'stats' | 'moves' | 'evolution' | 'forms'
   >('stats');
   const [imageError, setImageError] = useState(false);
+
+  const [resistances, setResistances] = useState<
+    { type: string; multiplier: number }[] | null
+  >(null);
+  const [immunities, setImmunities] = useState<
+    { type: string; multiplier: number }[] | null
+  >(null);
+
+  const [offensePrimary, setOffensePrimary] = useState<
+    { type: string; multiplier: number }[] | null
+  >(null);
+  const [offenseSecondary, setOffenseSecondary] = useState<
+    { type: string; multiplier: number }[] | null
+  >(null);
+
+  const [weaknesses, setWeaknesses] = useState<
+    { type: string; multiplier: number }[] | null
+  >(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const chart = await loadTypeChart();
+        const primary = pokemon.primaryType.names.English;
+        const secondary = pokemon.secondaryType?.names.English ?? null;
+        const w = computeWeaknesses(primary, secondary, chart);
+        const r = computeResistances(primary, secondary, chart);
+        const i = computeImmunities(primary, secondary, chart);
+        const op = computeOffenseStrengths(primary, chart);
+        const os = secondary ? computeOffenseStrengths(secondary, chart) : [];
+        if (mounted) {
+          setWeaknesses(w);
+          setResistances(r);
+          setImmunities(i);
+          setOffensePrimary(op);
+          setOffenseSecondary(os);
+        }
+      } catch {
+        if (mounted) {
+          setWeaknesses([]);
+          setResistances([]);
+          setImmunities([]);
+        }
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [pokemon]);
 
   // Get the primary image URL
   const getImageUrl = (poke: Pokemon, shiny: boolean = false) => {
@@ -370,6 +427,135 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                     )}
                 </div>
               </div>
+
+              <div>
+                <h3 className='text-lg font-semibold mb-2'>Weaknesses</h3>
+                {weaknesses === null ? (
+                  <div className='text-sm text-gray-500'>Loading...</div>
+                ) : weaknesses.length === 0 ? (
+                  <div className='text-sm text-gray-600 dark:text-gray-300'>
+                    None
+                  </div>
+                ) : (
+                  <div className='flex flex-wrap gap-2'>
+                    {weaknesses.map((w) => (
+                      <span
+                        key={w.type}
+                        className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
+                          w.type
+                        )}`}
+                      >
+                        {w.type} {w.multiplier}x
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className='mt-4'>
+                <h3 className='text-lg font-semibold mb-2'>Resistances</h3>
+                {resistances === null ? (
+                  <div className='text-sm text-gray-500'>Loading...</div>
+                ) : resistances.length === 0 ? (
+                  <div className='text-sm text-gray-600 dark:text-gray-300'>
+                    None
+                  </div>
+                ) : (
+                  <div className='flex flex-wrap gap-2'>
+                    {resistances.map((r) => (
+                      <span
+                        key={r.type}
+                        className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
+                          r.type
+                        )}`}
+                      >
+                        {r.type} {r.multiplier}x
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className='mt-4'>
+                <h3 className='text-lg font-semibold mb-2'>Immunities</h3>
+                {immunities === null ? (
+                  <div className='text-sm text-gray-500'>Loading...</div>
+                ) : immunities.length === 0 ? (
+                  <div className='text-sm text-gray-600 dark:text-gray-300'>
+                    None
+                  </div>
+                ) : (
+                  <div className='flex flex-wrap gap-2'>
+                    {immunities.map((im) => (
+                      <span
+                        key={im.type}
+                        className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
+                          im.type
+                        )}`}
+                      >
+                        {im.type} 0x
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <h3 className='text-lg font-semibold mb-2'>
+                  Strengths (Offense)
+                </h3>
+                <div className='mb-1 text-sm text-gray-600 dark:text-gray-300'>
+                  Using {pokemon.primaryType.names.English} moves
+                </div>
+                {offensePrimary === null ? (
+                  <div className='text-sm text-gray-500'>Loading...</div>
+                ) : offensePrimary.length === 0 ? (
+                  <div className='text-sm text-gray-600 dark:text-gray-300'>
+                    None
+                  </div>
+                ) : (
+                  <div className='flex flex-wrap gap-2'>
+                    {offensePrimary.map((o) => (
+                      <span
+                        key={`p-${o.type}`}
+                        className={`px-3 py-1 rounded-full text-white text-sm font-medium border border-white/30 shadow-sm ${getTypeColor(
+                          o.type
+                        )}`}
+                      >
+                        {o.type} {o.multiplier}x
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {pokemon.secondaryType && (
+                  <>
+                    <div className='mt-3 mb-1 text-sm text-gray-600 dark:text-gray-300'>
+                      Using {pokemon.secondaryType.names.English} moves
+                    </div>
+                    {offenseSecondary === null ? (
+                      <div className='text-sm text-gray-500'>Loading...</div>
+                    ) : offenseSecondary.length === 0 ? (
+                      <div className='text-sm text-gray-600 dark:text-gray-300'>
+                        None
+                      </div>
+                    ) : (
+                      <div className='flex flex-wrap gap-2'>
+                        {offenseSecondary.map((o) => (
+                          <span
+                            key={`s-${o.type}`}
+                            className={`px-3 py-1 rounded-full text-white text-sm font-medium border border-white/30 shadow-sm ${getTypeColor(
+                              o.type
+                            )}`}
+                          >
+                            {o.type} {o.multiplier}x
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           )}
 
@@ -464,81 +650,79 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
               {/* Mega Evolutions */}
               {pokemon.hasMegaEvolution &&
                 pokemon.megaEvolutions &&
-                Object.keys(pokemon.megaEvolutions).length > 0 && (
+                (Array.isArray(pokemon.megaEvolutions)
+                  ? pokemon.megaEvolutions.length > 0
+                  : Object.keys(pokemon.megaEvolutions).length > 0) && (
                   <div>
                     <h3 className='text-lg font-semibold mb-4'>
                       Mega Evolutions
                     </h3>
                     <div className='space-y-4'>
-                      {Object.entries(pokemon.megaEvolutions).map(
-                        ([key, megaForm]) => (
-                          <div
-                            key={key}
-                            className='bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-lg p-4 border border-purple-200 dark:border-purple-700'
-                          >
-                            <div className='flex items-center space-x-4'>
-                              {megaForm.assets?.image && (
-                                <Image
-                                  src={megaForm.assets.image}
-                                  alt={megaForm.names.English}
-                                  width={64}
-                                  height={64}
-                                  className='object-contain'
-                                />
-                              )}
-                              <div className='flex-1'>
-                                <h4 className='text-lg font-bold text-purple-800 dark:text-purple-200'>
-                                  {megaForm.names.English}
-                                </h4>
-                                <div className='flex gap-2 mt-2'>
-                                  <span
-                                    className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
-                                      megaForm.primaryType.names.English
-                                    )}`}
-                                  >
-                                    {megaForm.primaryType.names.English}
-                                  </span>
-                                  {megaForm.secondaryType && (
-                                    <span
-                                      className={`px-3 py-1 rounded-full text-white text-sm font-medium ${getTypeColor(
-                                        megaForm.secondaryType.names.English
-                                      )}`}
-                                    >
-                                      {megaForm.secondaryType.names.English}
-                                    </span>
-                                  )}
+                      {(Array.isArray(pokemon.megaEvolutions)
+                        ? pokemon.megaEvolutions
+                        : Object.values(
+                            pokemon.megaEvolutions as unknown as Record<
+                              string,
+                              unknown
+                            >
+                          )
+                      ).map((mega: unknown, idx) => (
+                        <div
+                          key={
+                            (
+                              mega as {
+                                formId?: string | number;
+                                id?: string | number;
+                              }
+                            ).formId ||
+                            (
+                              mega as {
+                                formId?: string | number;
+                                id?: string | number;
+                              }
+                            ).id ||
+                            idx
+                          }
+                          className='bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900 rounded-lg p-4 border border-purple-200 dark:border-purple-700'
+                        >
+                          <div className='flex items-center space-x-4'>
+                            {pokemon.assets?.image && (
+                              <Image
+                                src={pokemon.assets.image}
+                                alt={`Mega ${pokemon.names.English}`}
+                                width={64}
+                                height={64}
+                                className='object-contain'
+                              />
+                            )}
+                            <div className='flex-1'>
+                              <h4 className='text-lg font-bold text-purple-800 dark:text-purple-200'>
+                                Mega {pokemon.names.English}
+                              </h4>
+                              <div className='mt-2 grid grid-cols-2 gap-4 text-sm'>
+                                <div>
+                                  <div className='text-gray-600 dark:text-gray-300'>
+                                    Energy
+                                  </div>
+                                  <div className='font-bold text-purple-700 dark:text-purple-300'>
+                                    {(mega as { energy?: number }).energy ??
+                                      '—'}
+                                  </div>
                                 </div>
-                                <div className='grid grid-cols-3 gap-4 mt-3 text-sm'>
-                                  <div className='text-center'>
-                                    <div className='text-gray-600 dark:text-gray-300'>
-                                      HP
-                                    </div>
-                                    <div className='font-bold text-green-600'>
-                                      {megaForm.stats.stamina}
-                                    </div>
+                                <div>
+                                  <div className='text-gray-600 dark:text-gray-300'>
+                                    Candies
                                   </div>
-                                  <div className='text-center'>
-                                    <div className='text-gray-600 dark:text-gray-300'>
-                                      Attack
-                                    </div>
-                                    <div className='font-bold text-red-600'>
-                                      {megaForm.stats.attack}
-                                    </div>
-                                  </div>
-                                  <div className='text-center'>
-                                    <div className='text-gray-600 dark:text-gray-300'>
-                                      Defense
-                                    </div>
-                                    <div className='font-bold text-blue-600'>
-                                      {megaForm.stats.defense}
-                                    </div>
+                                  <div className='font-bold text-purple-700 dark:text-purple-300'>
+                                    {(mega as { candies?: number }).candies ??
+                                      '—'}
                                   </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        )
-                      )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}

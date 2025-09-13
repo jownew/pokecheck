@@ -34,6 +34,10 @@ export const typeColors: Record<string, string> = {
 const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [naturalSize, setNaturalSize] = useState<{
+    w: number;
+    h: number;
+  } | null>(null);
 
   // Get the primary image URL
   const getImageUrl = () => {
@@ -75,17 +79,27 @@ const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick }) => {
       </div>
 
       {/* Pokemon Image */}
-      <div className='relative h-32 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700'>
+      <div className='relative h-32 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 overflow-hidden'>
         {!imageError ? (
           <Image
             src={getImageUrl()}
             alt={pokemon.names.English}
-            width={96}
-            height={96}
-            className={`object-contain transition-opacity duration-300 ${
+            width={naturalSize?.w ?? 96}
+            height={naturalSize?.h ?? 96}
+            className={`transition-opacity duration-300 ${
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
-            onLoad={() => setIsLoading(false)}
+            style={{
+              width: 'auto',
+              height: 'auto',
+              maxHeight: '100%',
+              maxWidth: naturalSize ? `${naturalSize.w}px` : '100%',
+              objectFit: 'contain',
+            }}
+            onLoadingComplete={(img) => {
+              setIsLoading(false);
+              setNaturalSize({ w: img.naturalWidth, h: img.naturalHeight });
+            }}
             onError={() => {
               setImageError(true);
               setIsLoading(false);

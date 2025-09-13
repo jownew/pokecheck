@@ -7,8 +7,8 @@ import { getUniqueTypes, getUniqueGenerations } from '@/utils/pokemonData';
 interface SearchAndFilterProps {
   pokemonList: Pokemon[];
   onSearch: (searchTerm: string) => void;
-  onTypeFilter: (type: string) => void;
-  onGenerationFilter: (generation: number | null) => void;
+  onTypeFilter: (types: string[]) => void;
+  onGenerationFilter: (generations: number[]) => void;
   onClearFilters: () => void;
 }
 
@@ -20,16 +20,20 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   onClearFilters,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState('all');
-  const [selectedGeneration, setSelectedGeneration] = useState<number | null>(
-    null
-  );
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedGenerations, setSelectedGenerations] = useState<number[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Use ref to store the latest onSearch function to avoid dependency issues
   const onSearchRef = useRef(onSearch);
   onSearchRef.current = onSearch;
+
+  // Refs to avoid unstable callback deps causing effect loops
+  const onTypeFilterRef = useRef(onTypeFilter);
+  onTypeFilterRef.current = onTypeFilter;
+  const onGenerationFilterRef = useRef(onGenerationFilter);
+  onGenerationFilterRef.current = onGenerationFilter;
 
   const uniqueTypes = getUniqueTypes(pokemonList);
   const uniqueGenerations = getUniqueGenerations(pokemonList);
@@ -57,30 +61,46 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     }
   };
 
-  // Handle type filter changes
-  const handleTypeChange = (type: string) => {
-    setSelectedType(type);
-    onTypeFilter(type);
+  // Propagate type selection changes to parent after render
+  useEffect(() => {
+    onTypeFilterRef.current(selectedTypes);
+  }, [selectedTypes]);
+
+  // Propagate generation selection changes to parent after render
+  useEffect(() => {
+    onGenerationFilterRef.current(selectedGenerations);
+  }, [selectedGenerations]);
+
+  // Handle type filter toggle
+  const handleTypeToggle = (type: string) => {
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
   };
 
-  // Handle generation filter changes
-  const handleGenerationChange = (generation: number | null) => {
-    setSelectedGeneration(generation);
-    onGenerationFilter(generation);
+  // Handle generation filter toggle
+  const handleGenerationToggle = (generation: number) => {
+    setSelectedGenerations((prev) =>
+      prev.includes(generation)
+        ? prev.filter((g) => g !== generation)
+        : [...prev, generation]
+    );
   };
 
   // Clear all filters
   const handleClearFilters = () => {
     setSearchTerm('');
     setDebouncedSearchTerm(''); // Clear debounced term immediately
-    setSelectedType('all');
-    setSelectedGeneration(null);
+    setSelectedTypes([]);
+    setSelectedGenerations([]);
     onClearFilters();
   };
 
   // Check if any filters are active
   const hasActiveFilters =
-    searchTerm || selectedType !== 'all' || selectedGeneration !== null;
+    Boolean(searchTerm) ||
+    selectedTypes.length > 0 ||
+    selectedGenerations.length > 0;
 
   return (
     <div className='bg-white dark:bg-gray-900 shadow-lg rounded-lg p-4 mb-6'>
@@ -186,18 +206,32 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
             <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
               Filter by Type
             </label>
-            <select
-              value={selectedType}
-              onChange={(e) => handleTypeChange(e.target.value)}
-              className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none'
-            >
-              <option value='all'>All Types</option>
+            <div className='w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 p-3 max-h-56 overflow-auto grid grid-cols-2 sm:grid-cols-3 gap-2'>
               {uniqueTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
+                <label
+                  key={type}
+                  className='flex items-center gap-2 text-gray-800 dark:text-gray-100'
+                >
+                  <input
+                    type='checkbox'
+                    checked={selectedTypes.includes(type)}
+                    onChange={() => handleTypeToggle(type)}
+                    className='rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500'
+                  />
+                  <span>{type}</span>
+                </label>
               ))}
-            </select>
+            </div>
+            <div className='mt-2'>
+              <button
+                onClick={() => {
+                  setSelectedTypes([]);
+                }}
+                className='text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 underline'
+              >
+                Clear Types
+              </button>
+            </div>
           </div>
 
           {/* Generation Filter */}
@@ -205,22 +239,32 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
             <label className='block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2'>
               Filter by Generation
             </label>
-            <select
-              value={selectedGeneration || ''}
-              onChange={(e) =>
-                handleGenerationChange(
-                  e.target.value ? parseInt(e.target.value) : null
-                )
-              }
-              className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none'
-            >
-              <option value=''>All Generations</option>
+            <div className='w-full border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 p-3 max-h-56 overflow-auto grid grid-cols-2 sm:grid-cols-3 gap-2'>
               {uniqueGenerations.map((gen) => (
-                <option key={gen} value={gen}>
-                  Generation {gen}
-                </option>
+                <label
+                  key={gen}
+                  className='flex items-center gap-2 text-gray-800 dark:text-gray-100'
+                >
+                  <input
+                    type='checkbox'
+                    checked={selectedGenerations.includes(gen)}
+                    onChange={() => handleGenerationToggle(gen)}
+                    className='rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500'
+                  />
+                  <span>Generation {gen}</span>
+                </label>
               ))}
-            </select>
+            </div>
+            <div className='mt-2'>
+              <button
+                onClick={() => {
+                  setSelectedGenerations([]);
+                }}
+                className='text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 underline'
+              >
+                Clear Generations
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -239,28 +283,34 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
               </button>
             </span>
           )}
-          {selectedType !== 'all' && (
-            <span className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'>
-              Type: {selectedType}
+          {selectedTypes.map((type) => (
+            <span
+              key={type}
+              className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+            >
+              Type: {type}
               <button
-                onClick={() => handleTypeChange('all')}
+                onClick={() => handleTypeToggle(type)}
                 className='ml-2 text-green-600 dark:text-green-300 hover:text-green-800 dark:hover:text-green-200'
               >
                 ×
               </button>
             </span>
-          )}
-          {selectedGeneration && (
-            <span className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'>
-              Gen {selectedGeneration}
+          ))}
+          {selectedGenerations.map((gen) => (
+            <span
+              key={gen}
+              className='inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+            >
+              Gen {gen}
               <button
-                onClick={() => handleGenerationChange(null)}
+                onClick={() => handleGenerationToggle(gen)}
                 className='ml-2 text-purple-600 dark:text-purple-300 hover:text-purple-800 dark:hover:text-purple-200'
               >
                 ×
               </button>
             </span>
-          )}
+          ))}
         </div>
       )}
     </div>

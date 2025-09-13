@@ -8,8 +8,8 @@ import { Pokemon } from '@/types/pokemon';
 import {
   getPokemonData,
   searchPokemon,
-  filterByType,
-  filterByGeneration,
+  filterByTypes,
+  filterByGenerations,
   getStorageInfo,
 } from '@/utils/pokemonData';
 import LoadingScreen from '@/components/LoadingScreen';
@@ -33,6 +33,10 @@ export default function Home() {
   const [theme, setTheme] = useState<'system' | 'light' | 'dark'>('system');
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 24;
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedGenerations, setSelectedGenerations] = useState<number[]>([]);
 
   // Scroll to top on page change
   useEffect(() => {
@@ -138,69 +142,80 @@ export default function Home() {
     loadData();
   }, []);
 
+  // Recompute filtered list based on search, types, and generations
+  const recomputeFilters = (
+    nextSearch: string,
+    nextTypes: string[],
+    nextGenerations: number[]
+  ) => {
+    let result = allPokemon;
+    if (nextSearch.trim()) {
+      result = searchPokemon(result, nextSearch);
+    }
+    if (nextTypes.length > 0) {
+      result = filterByTypes(result, nextTypes);
+    }
+    if (nextGenerations.length > 0) {
+      result = filterByGenerations(result, nextGenerations);
+    }
+
+    setFilteredPokemon(
+      nextSearch || nextTypes.length || nextGenerations.length ? result : []
+    );
+    setShowDashboard(
+      !(nextSearch || nextTypes.length || nextGenerations.length)
+    );
+    setCurrentPage(1);
+  };
+
   // Handle search
-  const handleSearch = (searchTerm: string) => {
-    if (searchTerm.trim()) {
-      const filtered = searchPokemon(allPokemon, searchTerm);
-      setFilteredPokemon(filtered);
-      setShowDashboard(false);
-      setCurrentPage(1);
-    } else {
-      setFilteredPokemon([]);
-      setShowDashboard(true);
-      setCurrentPage(1);
-    }
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    recomputeFilters(term, selectedTypes, selectedGenerations);
   };
 
-  // Handle type filter
-  const handleTypeFilter = (type: string) => {
-    if (type !== 'all') {
-      const filtered = filterByType(allPokemon, type);
-      setFilteredPokemon(filtered);
-      setShowDashboard(false);
-      setCurrentPage(1);
-    } else {
-      setFilteredPokemon([]);
-      setShowDashboard(true);
-      setCurrentPage(1);
-    }
+  // Handle type filter (multiple)
+  const handleTypeFilter = (types: string[]) => {
+    setSelectedTypes(types);
+    recomputeFilters(searchTerm, types, selectedGenerations);
   };
 
-  // Handle generation filter
-  const handleGenerationFilter = (generation: number | null) => {
-    if (generation) {
-      const filtered = filterByGeneration(allPokemon, generation);
-      setFilteredPokemon(filtered);
-      setShowDashboard(false);
-      setCurrentPage(1);
-    } else {
-      setFilteredPokemon([]);
-      setShowDashboard(true);
-      setCurrentPage(1);
-    }
+  // Handle generation filter (multiple)
+  const handleGenerationFilter = (generations: number[]) => {
+    setSelectedGenerations(generations);
+    recomputeFilters(searchTerm, selectedTypes, generations);
   };
 
   // Handle clear filters
   const handleClearFilters = () => {
+    setSearchTerm('');
+    setSelectedTypes([]);
+    setSelectedGenerations([]);
     setFilteredPokemon([]);
     setShowDashboard(true);
     setCurrentPage(1);
   };
 
-  // Handle quick filter from dashboard
+  // Handle quick filter from dashboard (toggle type)
   const handleQuickFilter = (type: string) => {
-    const filtered = filterByType(allPokemon, type);
-    setFilteredPokemon(filtered);
-    setShowDashboard(false);
-    setCurrentPage(1);
+    setSelectedTypes((prev) => {
+      const next = prev.includes(type)
+        ? prev.filter((t) => t !== type)
+        : [...prev, type];
+      recomputeFilters(searchTerm, next, selectedGenerations);
+      return next;
+    });
   };
 
-  // Handle generation filter from dashboard
+  // Handle generation filter from dashboard (toggle generation)
   const handleDashboardGenerationFilter = (generation: number) => {
-    const filtered = filterByGeneration(allPokemon, generation);
-    setFilteredPokemon(filtered);
-    setShowDashboard(false);
-    setCurrentPage(1);
+    setSelectedGenerations((prev) => {
+      const next = prev.includes(generation)
+        ? prev.filter((g) => g !== generation)
+        : [...prev, generation];
+      recomputeFilters(searchTerm, selectedTypes, next);
+      return next;
+    });
   };
 
   // Handle Pokémon card click

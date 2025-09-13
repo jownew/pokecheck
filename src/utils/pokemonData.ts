@@ -363,6 +363,34 @@ export const filterByGeneration = (
 };
 
 /**
+ * Filter Pokémon by multiple types (matches if primary OR secondary type is in the list)
+ */
+export const filterByTypes = (
+  pokemonList: Pokemon[],
+  types: string[]
+): Pokemon[] => {
+  if (!types || types.length === 0) return pokemonList;
+  const typeSet = new Set(types.map((t) => t.toLowerCase()));
+  return pokemonList.filter((pokemon) => {
+    const primary = pokemon.primaryType.names.English.toLowerCase();
+    const secondary = pokemon.secondaryType?.names.English.toLowerCase();
+    return typeSet.has(primary) || (secondary ? typeSet.has(secondary) : false);
+  });
+};
+
+/**
+ * Filter Pokémon by multiple generations
+ */
+export const filterByGenerations = (
+  pokemonList: Pokemon[],
+  generations: number[]
+): Pokemon[] => {
+  if (!generations || generations.length === 0) return pokemonList;
+  const genSet = new Set(generations);
+  return pokemonList.filter((pokemon) => genSet.has(pokemon.generation));
+};
+
+/**
  * Get unique types from Pokémon list
  */
 export const getUniqueTypes = (pokemonList: Pokemon[]): string[] => {

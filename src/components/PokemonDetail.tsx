@@ -141,6 +141,40 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
     return null;
   };
 
+  // Format quest identifier(s) into a human‑readable label
+  const formatQuestLabel = (quest: unknown): string => {
+    if (!quest) return 'special quest';
+    if (typeof quest === 'string') {
+      const pretty = quest
+        .replace(/^(quest_|item_)/gi, '')
+        .replace(/_/g, ' ')
+        .toLowerCase();
+      return pretty.charAt(0).toUpperCase() + pretty.slice(1);
+    }
+    if (typeof quest === 'object') {
+      const q = quest as Record<string, unknown>;
+      const candidates: Array<string | undefined> = [
+        typeof q['description'] === 'string'
+          ? (q['description'] as string)
+          : undefined,
+        typeof q['name'] === 'string' ? (q['name'] as string) : undefined,
+      ];
+      const names = (q['names'] || q['Names']) as
+        | Record<string, unknown>
+        | undefined;
+      const english =
+        names && typeof names['English'] === 'string'
+          ? (names['English'] as string)
+          : undefined;
+      const chosen = candidates.find((c) => !!c) || english;
+      if (chosen) {
+        const pretty = chosen.replace(/_/g, ' ');
+        return pretty.charAt(0).toUpperCase() + pretty.slice(1);
+      }
+    }
+    return 'special quest';
+  };
+
   // Get formatted requirements between two stages if there's a direct evolution
   // Get raw evolution requirement (Evolution object) between two stages
   const getEvolutionRequirementBetween = (
@@ -201,11 +235,17 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                             <span aria-hidden='true'>🪙</span> {itemName}
                           </span>
                         )}
-                        {req.quests && req.quests.length > 0 && (
-                          <span className='px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'>
-                            <span aria-hidden='true'>⭐</span> special quest
-                          </span>
-                        )}
+                        {Array.isArray(req.quests) &&
+                          req.quests.length > 0 &&
+                          req.quests.map((q, idx) => (
+                            <span
+                              key={idx}
+                              className='px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                            >
+                              <span aria-hidden='true'>⭐</span>{' '}
+                              {formatQuestLabel(q as unknown)}
+                            </span>
+                          ))}
                       </div>
                     )}
                     <EvolutionBranch node={child} />

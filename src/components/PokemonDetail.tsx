@@ -102,8 +102,9 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
     return typeColors[typeName] || 'bg-gray-400';
   };
 
-  // Convert moves object to array
-  const getMovesArray = (moves: Record<string, Move>) => {
+  // Convert moves object to array (defensive against undefined/null)
+  const getMovesArray = (moves?: Record<string, Move> | null) => {
+    if (!moves || typeof moves !== 'object') return [];
     return Object.values(moves);
   };
 
@@ -297,6 +298,13 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                   height={80}
                   className='object-contain'
                   onError={() => setImageError(true)}
+                  style={{
+                    width: 'auto',
+                    height: 'auto',
+                    maxHeight: '100%',
+                    maxWidth: '100%',
+                    objectFit: 'contain',
+                  }}
                 />
               ) : (
                 <div className='w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center'>

@@ -10,6 +10,10 @@ interface SearchAndFilterProps {
   onTypeFilter: (types: string[]) => void;
   onGenerationFilter: (generations: number[]) => void;
   onClearFilters: () => void;
+  // Optional controlled values from parent so dashboard clicks show up in chips
+  selectedTypesValue?: string[];
+  selectedGenerationsValue?: number[];
+  searchTermValue?: string;
 }
 
 const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
@@ -18,6 +22,9 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
   onTypeFilter,
   onGenerationFilter,
   onClearFilters,
+  selectedTypesValue,
+  selectedGenerationsValue,
+  searchTermValue,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
@@ -46,6 +53,45 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
+
+  // Sync internal state from optional controlled props
+  useEffect(() => {
+    if (Array.isArray(selectedTypesValue)) {
+      setSelectedTypes((prev) => {
+        const next = selectedTypesValue ?? [];
+        // Avoid unnecessary state updates
+        if (
+          prev.length === next.length &&
+          prev.every((v, i) => v === next[i])
+        ) {
+          return prev;
+        }
+        return next;
+      });
+    }
+  }, [selectedTypesValue]);
+
+  useEffect(() => {
+    if (Array.isArray(selectedGenerationsValue)) {
+      setSelectedGenerations((prev) => {
+        const next = selectedGenerationsValue ?? [];
+        if (
+          prev.length === next.length &&
+          prev.every((v, i) => v === next[i])
+        ) {
+          return prev;
+        }
+        return next;
+      });
+    }
+  }, [selectedGenerationsValue]);
+
+  useEffect(() => {
+    if (typeof searchTermValue === 'string') {
+      setSearchTerm(searchTermValue);
+      if (searchTermValue === '') setDebouncedSearchTerm('');
+    }
+  }, [searchTermValue]);
 
   // Trigger search when debounced search term changes
   useEffect(() => {

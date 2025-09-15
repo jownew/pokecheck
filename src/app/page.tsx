@@ -325,6 +325,9 @@ export default function Home() {
           onTypeFilter={handleTypeFilter}
           onGenerationFilter={handleGenerationFilter}
           onClearFilters={handleClearFilters}
+          selectedTypesValue={selectedTypes}
+          selectedGenerationsValue={selectedGenerations}
+          searchTermValue={searchTerm}
         />
 
         {/* Dashboard or Pokémon Grid */}

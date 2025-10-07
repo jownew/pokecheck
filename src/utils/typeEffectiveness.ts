@@ -98,3 +98,76 @@ export function computeOffenseStrengths(
   );
   return out;
 }
+
+/**
+ * Find Pokémon that the given Pokémon is weak to, ordered by weakness multiplier (highest first)
+ * and prioritizing Pokémon that match multiple weakness types
+ */
+export function findPokemonWeakTo<
+  T extends {
+    names: { English: string };
+    primaryType: { names: { English: string } };
+    secondaryType?: { names: { English: string } } | null;
+  }
+>(
+  targetPokemon: T,
+  allPokemon: T[],
+  chart: TypeChart
+): Array<{
+  pokemon: T;
+  score: number;
+  matchingTypes: string[];
+}> {
+  // Get the weaknesses of the target Pokémon
+  const weaknesses = computeWeaknesses(
+    targetPokemon.primaryType.names.English,
+    targetPokemon.secondaryType?.names.English ?? null,
+    chart
+  );
+
+  if (weaknesses.length === 0) return [];
+
+  // Create a map of weakness types to their multipliers
+  const weaknessMap = new Map<string, number>();
+  weaknesses.forEach((w) => weaknessMap.set(w.type, w.multiplier));
+
+  // Score each Pokémon based on how well they exploit the target's weaknesses
+  const scoredPokemon: Array<{
+    pokemon: T;
+    score: number;
+    matchingTypes: string[];
+  }> = [];
+
+  allPokemon.forEach((pokemon) => {
+    const pokemonTypes: string[] = [
+      pokemon.primaryType.names.English,
+      pokemon.secondaryType?.names.English,
+    ].filter((type): type is string => Boolean(type));
+
+    const matchingTypes: string[] = [];
+    let score = 0;
+
+    pokemonTypes.forEach((type) => {
+      if (weaknessMap.has(type)) {
+        const multiplier = weaknessMap.get(type)!;
+        matchingTypes.push(type);
+        score += multiplier;
+      }
+    });
+
+    if (score > 0) {
+      scoredPokemon.push({ pokemon, score, matchingTypes });
+    }
+  });
+
+  // Sort by score (highest first), then by number of matching types, then alphabetically
+  scoredPokemon.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    if (b.matchingTypes.length !== a.matchingTypes.length) {
+      return b.matchingTypes.length - a.matchingTypes.length;
+    }
+    return a.pokemon.names.English.localeCompare(b.pokemon.names.English);
+  });
+
+  return scoredPokemon;
+}

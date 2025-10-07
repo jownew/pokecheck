@@ -11,7 +11,9 @@ import {
   computeResistances,
   computeImmunities,
   computeOffenseStrengths,
+  findPokemonWeakTo,
 } from '@/utils/typeEffectiveness';
+import CompactPokemonList from './CompactPokemonList';
 
 interface PokemonDetailProps {
   pokemon: Pokemon;
@@ -49,6 +51,12 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
     { type: string; multiplier: number }[] | null
   >(null);
 
+  const [pokemonWeakTo, setPokemonWeakTo] = useState<Array<{
+    pokemon: Pokemon;
+    score: number;
+    matchingTypes: string[];
+  }> | null>(null);
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -61,25 +69,28 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
         const i = computeImmunities(primary, secondary, chart);
         const op = computeOffenseStrengths(primary, chart);
         const os = secondary ? computeOffenseStrengths(secondary, chart) : [];
+        const weakTo = findPokemonWeakTo(pokemon, allPokemon, chart);
         if (mounted) {
           setWeaknesses(w);
           setResistances(r);
           setImmunities(i);
           setOffensePrimary(op);
           setOffenseSecondary(os);
+          setPokemonWeakTo(weakTo);
         }
       } catch {
         if (mounted) {
           setWeaknesses([]);
           setResistances([]);
           setImmunities([]);
+          setPokemonWeakTo([]);
         }
       }
     })();
     return () => {
       mounted = false;
     };
-  }, [pokemon]);
+  }, [pokemon, allPokemon]);
 
   // Get the primary image URL
   const getImageUrl = (poke: Pokemon, shiny: boolean = false) => {
@@ -602,6 +613,25 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                       </div>
                     )}
                   </>
+                )}
+              </div>
+
+              <div>
+                <h3 className='text-lg font-semibold mb-2'>
+                  Pokémon That Counter This Pokémon
+                </h3>
+                <p className='text-sm text-gray-600 dark:text-gray-300 mb-3'>
+                  Pokémon with types that exploit this Pokémon&apos;s
+                  weaknesses, ordered by effectiveness
+                </p>
+                {pokemonWeakTo === null ? (
+                  <div className='text-sm text-gray-500'>Loading...</div>
+                ) : (
+                  <CompactPokemonList
+                    pokemonList={pokemonWeakTo}
+                    onPokemonSelect={onPokemonSelect}
+                    maxDisplay={15}
+                  />
                 )}
               </div>
             </div>

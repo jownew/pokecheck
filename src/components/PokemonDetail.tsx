@@ -29,7 +29,7 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
   onPokemonSelect,
 }) => {
   const [activeTab, setActiveTab] = useState<
-    'stats' | 'moves' | 'evolution' | 'forms'
+    'stats' | 'evolution' | 'counters' | 'moves' | 'forms'
   >('stats');
   const [imageError, setImageError] = useState(false);
 
@@ -355,8 +355,9 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
         <div className='flex border-b'>
           {[
             { id: 'stats', label: 'Stats' },
-            { id: 'moves', label: 'Moves' },
             { id: 'evolution', label: 'Evolution' },
+            { id: 'counters', label: 'Counters' },
+            { id: 'moves', label: 'Moves' },
             { id: 'forms', label: 'Forms' },
           ].map((tab) => (
             <button
@@ -615,25 +616,6 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                   </>
                 )}
               </div>
-
-              <div>
-                <h3 className='text-lg font-semibold mb-2'>
-                  Pokémon That Counter This Pokémon
-                </h3>
-                <p className='text-sm text-gray-600 dark:text-gray-300 mb-3'>
-                  Pokémon with types that exploit this Pokémon&apos;s
-                  weaknesses, ordered by effectiveness
-                </p>
-                {pokemonWeakTo === null ? (
-                  <div className='text-sm text-gray-500'>Loading...</div>
-                ) : (
-                  <CompactPokemonList
-                    pokemonList={pokemonWeakTo}
-                    onPokemonSelect={onPokemonSelect}
-                    maxDisplay={15}
-                  />
-                )}
-              </div>
             </div>
           )}
 
@@ -718,6 +700,28 @@ const PokemonDetail: React.FC<PokemonDetailProps> = ({
                 </div>
               ) : (
                 <p className='text-gray-600'>This Pokémon does not evolve.</p>
+              )}
+            </div>
+          )}
+
+          {/* Evolution Tab */}
+          {activeTab === 'counters' && (
+            <div>
+              <h3 className='text-lg font-semibold mb-2'>
+                Pokémon That Counter This Pokémon
+              </h3>
+              <p className='text-sm text-gray-600 dark:text-gray-300 mb-3'>
+                Pokémon with types that exploit this Pokémon&apos;s weaknesses,
+                ordered by effectiveness
+              </p>
+              {pokemonWeakTo === null ? (
+                <div className='text-sm text-gray-500'>Loading...</div>
+              ) : (
+                <CompactPokemonList
+                  pokemonList={pokemonWeakTo}
+                  onPokemonSelect={onPokemonSelect}
+                  maxDisplay={20}
+                />
               )}
             </div>
           )}
